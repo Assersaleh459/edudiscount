@@ -7,7 +7,8 @@ Session backups below are auto-logged by the Claude Code Stop hook.
 
 ## Named Versions
 
-| Version | Date | Description |
+| Version | Date |
+| v1.0.3 | 2026-05-19 | Welcome landing page with admin-configurable logo and text | Description |
 |---------|------|-------------|
 | [v1.0.1](versions/v1.0.1.md) | 2026-05-19 | Auto-versioned on session end |
 | [v1.0.2](versions/v1.0.2.md) | 2026-05-19 | Auto-versioned on session end |
