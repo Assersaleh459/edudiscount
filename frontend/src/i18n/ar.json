@@ -1,6 +1,7 @@
 {
   "appName": "EduDiscount",
   "tagline": "احصل على خصمك الطلابي في ثوانٍ",
+  "getStarted": "ابدأ الآن",
   "steps": {
     "school": "المدرسة",
     "subject": "المادة",

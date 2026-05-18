@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import WelcomePage from './pages/WelcomePage'
 import SelectorPage from './pages/SelectorPage'
 import CodePage from './pages/CodePage'
 import AdminLogin from './pages/admin/AdminLogin'
@@ -18,7 +19,8 @@ function RequireAdmin({ children }) {
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<SelectorPage />} />
+      <Route path="/" element={<WelcomePage />} />
+      <Route path="/select" element={<SelectorPage />} />
       <Route path="/code/:codeId" element={<CodePage />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route

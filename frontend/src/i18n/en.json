@@ -1,6 +1,7 @@
 {
   "appName": "EduDiscount",
   "tagline": "Get your student discount in seconds",
+  "getStarted": "Get Started",
   "steps": {
     "school": "School",
     "subject": "Subject",

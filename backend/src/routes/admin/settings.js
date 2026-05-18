@@ -8,6 +8,11 @@ router.use(requireAuth)
 // Settings are stored in .env / environment variables
 // This endpoint exposes non-sensitive settings and allows updating them at runtime
 let runtimeSettings = {
+  logoUrl: process.env.LOGO_URL || '',
+  welcomeTitle: process.env.WELCOME_TITLE || 'EduDiscount',
+  welcomeTitleAr: process.env.WELCOME_TITLE_AR || 'EduDiscount',
+  welcomeSubtitle: process.env.WELCOME_SUBTITLE || 'Get your student discount in seconds',
+  welcomeSubtitleAr: process.env.WELCOME_SUBTITLE_AR || 'احصل على خصمك الطلابي في ثوانٍ',
   partnerApiUrl: process.env.PARTNER_API_URL || '',
   defaultCurrency: process.env.DEFAULT_CURRENCY || 'EGP',
   smtpHost: process.env.SMTP_HOST || '',
@@ -21,14 +26,12 @@ router.get('/', (req, res) => {
 })
 
 router.put('/', (req, res) => {
-  const { partnerApiUrl, defaultCurrency, smtpHost, smtpPort, smtpUser, smtpFrom } = req.body
-  if (partnerApiUrl !== undefined) runtimeSettings.partnerApiUrl = partnerApiUrl
-  if (defaultCurrency !== undefined) runtimeSettings.defaultCurrency = defaultCurrency
-  if (smtpHost !== undefined) runtimeSettings.smtpHost = smtpHost
-  if (smtpPort !== undefined) runtimeSettings.smtpPort = smtpPort
-  if (smtpUser !== undefined) runtimeSettings.smtpUser = smtpUser
-  if (smtpFrom !== undefined) runtimeSettings.smtpFrom = smtpFrom
+  const allowed = ['logoUrl','welcomeTitle','welcomeTitleAr','welcomeSubtitle','welcomeSubtitleAr',
+    'partnerApiUrl','defaultCurrency','smtpHost','smtpPort','smtpUser','smtpFrom']
+  for (const key of allowed) {
+    if (req.body[key] !== undefined) runtimeSettings[key] = req.body[key]
+  }
   res.json({ success: true, settings: runtimeSettings })
 })
 
-module.exports = router
+module.exports = { router, runtimeSettings }

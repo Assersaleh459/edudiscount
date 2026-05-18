@@ -14,7 +14,7 @@ const adminSubjectsRouter = require('./routes/admin/subjects')
 const adminTeachersRouter = require('./routes/admin/teachers')
 const adminCodesRouter = require('./routes/admin/codes')
 const adminReportsRouter = require('./routes/admin/reports')
-const adminSettingsRouter = require('./routes/admin/settings')
+const { router: adminSettingsRouter, runtimeSettings } = require('./routes/admin/settings')
 
 const app = express()
 
@@ -39,6 +39,16 @@ app.use('/api/admin/reports', adminReportsRouter)
 app.use('/api/admin/settings', adminSettingsRouter)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
+
+app.get('/api/public/settings', (req, res) => {
+  res.json({
+    logoUrl: runtimeSettings.logoUrl,
+    welcomeTitle: runtimeSettings.welcomeTitle,
+    welcomeTitleAr: runtimeSettings.welcomeTitleAr,
+    welcomeSubtitle: runtimeSettings.welcomeSubtitle,
+    welcomeSubtitleAr: runtimeSettings.welcomeSubtitleAr,
+  })
+})
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => console.log(`Backend running on port ${PORT}`))
