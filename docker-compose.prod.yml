@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  postgres:
+    restart: always
+    ports: []
+
+  redis:
+    restart: always
+    ports: []
+
+  backend:
+    restart: always
+    environment:
+      NODE_ENV: production
+    ports: []
+
+  frontend:
+    restart: always
+    ports: []
+
+  nginx:
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/conf.d/default.conf
+      - /etc/letsencrypt:/etc/letsencrypt:ro

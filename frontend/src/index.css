@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-main: 'Outfit', sans-serif;
+  --font-arabic: 'Tajawal', sans-serif;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: #f8fafc;
+}
+
+[dir='rtl'] body,
+[dir='rtl'] * {
+  font-family: var(--font-arabic);
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+}

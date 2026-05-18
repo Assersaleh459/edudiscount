@@ -1,0 +1,78 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model School {
+  id         String    @id @default(cuid())
+  name       String    @unique
+  nameAr     String?
+  logoUrl    String?
+  language   String    @default("Arabic")
+  platformId String?
+  isActive   Boolean   @default(true)
+  subjects   Subject[]
+  createdAt  DateTime  @default(now())
+}
+
+model Subject {
+  id       String    @id @default(cuid())
+  schoolId String
+  school   School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  name     String
+  nameAr   String?
+  isActive Boolean   @default(true)
+  teachers Teacher[]
+}
+
+model Teacher {
+  id                String         @id @default(cuid())
+  subjectId         String
+  subject           Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  name              String
+  nameAr            String?
+  photoUrl          String?
+  platformTeacherId String         @default("")
+  coursePrice       Int
+  discountPct       Int
+  isActive          Boolean        @default(true)
+  codes             DiscountCode[]
+}
+
+model DiscountCode {
+  id            String    @id @default(cuid())
+  teacherId     String
+  teacher       Teacher   @relation(fields: [teacherId], references: [id])
+  studentEmail  String
+  code          String    @unique
+  originalPrice Int
+  discountPct   Int
+  finalPrice    Int
+  currency      String    @default("EGP")
+  expiresAt     DateTime
+  usedAt        DateTime?
+  status        String    @default("ACTIVE")
+  createdAt     DateTime  @default(now())
+}
+
+model IntegrationLog {
+  id        String   @id @default(cuid())
+  direction String
+  endpoint  String
+  payload   String
+  response  String?
+  status    Int?
+  createdAt DateTime @default(now())
+}
