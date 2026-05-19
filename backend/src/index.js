@@ -1,6 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
+const path = require('path')
 
 const schoolsRouter = require('./routes/schools')
 const subjectsRouter = require('./routes/subjects')
@@ -15,11 +16,15 @@ const adminTeachersRouter = require('./routes/admin/teachers')
 const adminCodesRouter = require('./routes/admin/codes')
 const adminReportsRouter = require('./routes/admin/reports')
 const { router: adminSettingsRouter, runtimeSettings } = require('./routes/admin/settings')
+const adminUploadRouter = require('./routes/admin/upload')
 
 const app = express()
 
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }))
 app.use(express.json())
+
+// Serve uploaded files
+app.use('/api/uploads', express.static(path.join(__dirname, '../../uploads')))
 
 // Public routes
 app.use('/api/schools', schoolsRouter)
@@ -37,6 +42,7 @@ app.use('/api/admin/teachers', adminTeachersRouter)
 app.use('/api/admin/codes', adminCodesRouter)
 app.use('/api/admin/reports', adminReportsRouter)
 app.use('/api/admin/settings', adminSettingsRouter)
+app.use('/api/admin/upload', adminUploadRouter)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 

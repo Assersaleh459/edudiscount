@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import api from '../../api/client'
 
 export default function Settings() {
@@ -6,6 +6,8 @@ export default function Settings() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [logoError, setLogoError] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     api.get('/admin/settings').then((r) => setSettings(r.data))
@@ -20,6 +22,26 @@ export default function Settings() {
 
   function set(key, value) {
     setSettings(s => ({ ...s, [key]: value }))
+  }
+
+  async function handleLogoUpload(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    setUploading(true)
+    setLogoError(false)
+    try {
+      const form = new FormData()
+      form.append('logo', file)
+      const { data } = await api.post('/admin/upload', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      set('logoUrl', data.url)
+    } catch {
+      alert('Upload failed. Max size is 5MB. Allowed: JPG, PNG, GIF, WebP, SVG.')
+    } finally {
+      setUploading(false)
+      e.target.value = ''
+    }
   }
 
   if (!settings) return <div className="p-8 text-gray-400">Loading...</div>
@@ -147,15 +169,41 @@ export default function Settings() {
       <section className="bg-white rounded-xl shadow p-6 space-y-5">
         <h2 className="text-lg font-semibold text-navy border-b pb-2">Welcome Page Content</h2>
 
-        {/* Logo URL + live preview */}
+        {/* Logo upload + URL + live preview */}
         <div>
-          <label className="text-xs font-medium text-gray-500 mb-1 block">Logo URL</label>
+          <label className="text-xs font-medium text-gray-500 mb-2 block">Logo</label>
+
+          {/* Upload button */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleLogoUpload}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current.click()}
+            disabled={uploading}
+            className="mb-2 px-4 py-2 bg-navy text-white text-sm rounded-lg hover:bg-navy-light transition disabled:opacity-50 flex items-center gap-2"
+          >
+            {uploading ? (
+              <><span className="animate-spin">⏳</span> Uploading...</>
+            ) : (
+              <><span>📁</span> Upload Image</>
+            )}
+          </button>
+
+          {/* Or paste URL */}
+          <p className="text-xs text-gray-400 mb-1">Or paste a URL:</p>
           <input
             value={settings.logoUrl || ''}
             onChange={(e) => { set('logoUrl', e.target.value); setLogoError(false) }}
             placeholder="https://example.com/logo.png"
             className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-teal focus:outline-none text-sm"
           />
+
+          {/* Preview */}
           <div className="mt-3 flex items-center gap-4">
             <div className="w-20 h-20 rounded-xl bg-navy/10 flex items-center justify-center overflow-hidden border border-gray-200">
               {settings.logoUrl && !logoError ? (
@@ -169,9 +217,20 @@ export default function Settings() {
                 <span className="text-4xl">{settings.welcomeIcon || '🎓'}</span>
               )}
             </div>
-            <p className="text-xs text-gray-400">
-              {settings.logoUrl && !logoError ? 'Preview above' : 'Enter a URL to preview your logo'}
-            </p>
+            <div>
+              <p className="text-xs text-gray-400">
+                {settings.logoUrl && !logoError ? 'Preview above' : 'No logo set — icon shown instead'}
+              </p>
+              {settings.logoUrl && (
+                <button
+                  type="button"
+                  onClick={() => { set('logoUrl', ''); setLogoError(false) }}
+                  className="text-xs text-red-400 hover:text-red-600 mt-1"
+                >
+                  Remove logo
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
