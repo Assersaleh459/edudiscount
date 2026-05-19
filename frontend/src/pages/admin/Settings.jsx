@@ -1,7 +1,31 @@
 import { useEffect, useRef, useState } from 'react'
 import api from '../../api/client'
+import { useTheme } from '../../context/ThemeContext'
+
+function AutoTextarea({ value, onChange, dir, placeholder }) {
+  const ref = useRef(null)
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.style.height = 'auto'
+      ref.current.style.height = ref.current.scrollHeight + 'px'
+    }
+  }, [value])
+  return (
+    <textarea
+      ref={ref}
+      value={value || ''}
+      onChange={onChange}
+      dir={dir}
+      placeholder={placeholder}
+      rows={1}
+      style={{ resize: 'none', overflow: 'hidden' }}
+      className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-teal focus:outline-none text-sm"
+    />
+  )
+}
 
 export default function Settings() {
+  const { refetch } = useTheme()
   const [settings, setSettings] = useState(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -17,6 +41,7 @@ export default function Settings() {
     setSaving(true)
     await api.put('/admin/settings', settings)
     setSaving(false); setSaved(true)
+    refetch()
     setTimeout(() => setSaved(false), 2000)
   }
 
@@ -237,11 +262,10 @@ export default function Settings() {
         {welcomeFields.map(({ key, label, dir }) => (
           <div key={key}>
             <label className="text-xs font-medium text-gray-500 mb-1 block">{label}</label>
-            <input
-              value={settings[key] || ''}
+            <AutoTextarea
+              value={settings[key]}
               onChange={(e) => set(key, e.target.value)}
               dir={dir}
-              className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-teal focus:outline-none text-sm"
             />
           </div>
         ))}

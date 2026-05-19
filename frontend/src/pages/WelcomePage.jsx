@@ -34,22 +34,22 @@ export default function WelcomePage() {
           className="flex flex-col items-center gap-8"
         >
           {/* Logo / Icon */}
-          <div className="w-36 h-36 rounded-3xl bg-white/10 backdrop-blur flex items-center justify-center shadow-2xl overflow-hidden">
+          <div className="flex items-center justify-center">
             {theme.logoUrl ? (
               <>
                 <img
                   src={theme.logoUrl}
                   alt="Logo"
-                  className="w-full h-full object-contain p-3"
+                  className="w-40 h-40 object-contain"
                   onError={(e) => {
                     e.target.style.display = 'none'
                     e.target.nextSibling.style.display = 'block'
                   }}
                 />
-                <span className="text-7xl" style={{ display: 'none' }}>{icon}</span>
+                <span className="text-8xl" style={{ display: 'none' }}>{icon}</span>
               </>
             ) : (
-              <span className="text-7xl">{icon}</span>
+              <span className="text-8xl">{icon}</span>
             )}
           </div>
 
