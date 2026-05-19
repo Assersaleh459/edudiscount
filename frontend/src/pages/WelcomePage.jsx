@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import LanguageToggle from '../components/LanguageToggle'
+import PageIcon from '../components/PageIcon'
 import { useTheme } from '../context/ThemeContext'
 
 export default function WelcomePage() {
@@ -18,14 +19,11 @@ export default function WelcomePage() {
     ? (theme.welcomeSubtitleAr || theme.welcomeSubtitle || t('tagline'))
     : (theme.welcomeSubtitle || t('tagline'))
 
-  const icon = theme.welcomeIcon || '🎓'
-
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--welcome-bg, #1B2A4A)' }}>
-      {/* Header — always shows icon + app name, like other pages */}
       <header className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">{icon}</span>
+          <PageIcon size="sm" />
           <span className="text-white font-bold text-xl">{t('appName')}</span>
         </div>
         <LanguageToggle />
@@ -38,25 +36,8 @@ export default function WelcomePage() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="flex flex-col items-center gap-8"
         >
-          {/* Center: logo image if set, otherwise big icon */}
-          <div className="flex items-center justify-center">
-            {theme.logoUrl ? (
-              <>
-                <img
-                  src={theme.logoUrl}
-                  alt="Logo"
-                  className="w-40 h-40 object-contain"
-                  onError={(e) => {
-                    e.target.style.display = 'none'
-                    e.target.nextSibling.style.display = 'block'
-                  }}
-                />
-                <span className="text-8xl" style={{ display: 'none' }}>{icon}</span>
-              </>
-            ) : (
-              <span className="text-8xl">{icon}</span>
-            )}
-          </div>
+          {/* Center: large logo or icon */}
+          <PageIcon size="lg" />
 
           {/* Text */}
           <div className="space-y-3">

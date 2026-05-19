@@ -6,6 +6,7 @@ import StepProgress from '../components/StepProgress'
 import CascadeSelector from '../components/CascadeSelector'
 import PricePreviewCard from '../components/PricePreviewCard'
 import LanguageToggle from '../components/LanguageToggle'
+import PageIcon from '../components/PageIcon'
 import { useTheme } from '../context/ThemeContext'
 import api from '../api/client'
 
@@ -50,7 +51,7 @@ export default function SelectorPage() {
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">{theme.welcomeIcon || '🎓'}</span>
+          <PageIcon size="sm" />
           <span className="text-white font-bold text-xl">{t('appName')}</span>
         </div>
         <LanguageToggle />

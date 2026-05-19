@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import CodeCard from '../components/CodeCard'
 import LanguageToggle from '../components/LanguageToggle'
+import PageIcon from '../components/PageIcon'
 import { useTheme } from '../context/ThemeContext'
 import api from '../api/client'
 
@@ -28,7 +29,7 @@ export default function CodePage() {
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--code-bg, #1B2A4A)' }}>
       <header className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">{theme.welcomeIcon || '🎓'}</span>
+          <PageIcon size="sm" />
           <span className="text-white font-bold text-xl">{t('appName')}</span>
         </div>
         <LanguageToggle />

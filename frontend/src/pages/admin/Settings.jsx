@@ -185,7 +185,10 @@ export default function Settings() {
               </div>
               <span className="text-white font-semibold">{settings.welcomeTitle || 'EduDiscount'}</span>
             </div>
-            <span className="text-2xl">{settings.welcomeIcon || '🎓'}</span>
+            {settings.logoUrl
+              ? <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 object-contain" />
+              : <span className="text-2xl">{settings.welcomeIcon || '🎓'}</span>
+            }
           </div>
         </div>
       </section>
