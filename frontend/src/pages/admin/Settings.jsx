@@ -18,6 +18,10 @@ export default function Settings() {
     setTimeout(() => setSaved(false), 2000)
   }
 
+  function set(key, value) {
+    setSettings(s => ({ ...s, [key]: value }))
+  }
+
   if (!settings) return <div className="p-8 text-gray-400">Loading...</div>
 
   const welcomeFields = [
@@ -36,20 +40,119 @@ export default function Settings() {
     { key: 'smtpFrom',       label: 'From Email' },
   ]
 
+  const pageColors = [
+    { key: 'welcomePageBg',  label: 'Welcome Page' },
+    { key: 'selectorPageBg', label: 'Selector Page' },
+    { key: 'codePageBg',     label: 'Code Page' },
+  ]
+
   return (
     <div className="p-8 space-y-8 max-w-2xl">
       <h1 className="text-2xl font-bold text-navy">⚙ Settings</h1>
 
-      {/* Welcome Page section */}
+      {/* Appearance section */}
+      <section className="bg-white rounded-xl shadow p-6 space-y-6">
+        <h2 className="text-lg font-semibold text-navy border-b pb-2">Appearance</h2>
+
+        {/* Icon */}
+        <div>
+          <label className="text-xs font-medium text-gray-500 mb-1 block">Page Icon (emoji)</label>
+          <div className="flex items-center gap-3">
+            <input
+              value={settings.welcomeIcon || ''}
+              onChange={(e) => set('welcomeIcon', e.target.value)}
+              placeholder="🎓"
+              className="w-24 border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-teal focus:outline-none text-2xl text-center"
+            />
+            <span className="text-4xl">{settings.welcomeIcon || '🎓'}</span>
+            <p className="text-xs text-gray-400">Shown in page headers when no logo is set</p>
+          </div>
+        </div>
+
+        {/* Per-page background colors */}
+        <div>
+          <label className="text-xs font-medium text-gray-500 mb-3 block">Page Background Colors</label>
+          <div className="grid grid-cols-3 gap-4">
+            {pageColors.map(({ key, label }) => (
+              <div key={key} className="flex flex-col items-center gap-2">
+                <div
+                  className="w-14 h-14 rounded-xl border-2 border-gray-200 overflow-hidden cursor-pointer shadow-sm"
+                  style={{ backgroundColor: settings[key] || '#1B2A4A' }}
+                >
+                  <input
+                    type="color"
+                    value={settings[key] || '#1B2A4A'}
+                    onChange={(e) => set(key, e.target.value)}
+                    className="w-full h-full opacity-0 cursor-pointer"
+                  />
+                </div>
+                <span className="text-xs text-gray-500 text-center">{label}</span>
+                <span className="text-xs font-mono text-gray-400">{settings[key] || '#1B2A4A'}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Accent + Primary colors */}
+        <div className="grid grid-cols-2 gap-6">
+          {[
+            { key: 'accentColor',  label: 'Accent Color',  hint: 'Buttons & highlights' },
+            { key: 'primaryColor', label: 'Primary Color', hint: 'Cards & nav elements' },
+          ].map(({ key, label, hint }) => (
+            <div key={key} className="flex flex-col gap-2">
+              <label className="text-xs font-medium text-gray-500">{label}</label>
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-12 h-12 rounded-xl border-2 border-gray-200 overflow-hidden cursor-pointer shadow-sm flex-shrink-0"
+                  style={{ backgroundColor: settings[key] || '#1B2A4A' }}
+                >
+                  <input
+                    type="color"
+                    value={settings[key] || '#1B2A4A'}
+                    onChange={(e) => set(key, e.target.value)}
+                    className="w-full h-full opacity-0 cursor-pointer"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-mono text-gray-700">{settings[key] || '#1B2A4A'}</p>
+                  <p className="text-xs text-gray-400">{hint}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Live mini-preview */}
+        <div>
+          <label className="text-xs font-medium text-gray-500 mb-2 block">Live Preview</label>
+          <div
+            className="rounded-xl p-4 flex items-center justify-between"
+            style={{ backgroundColor: settings.welcomePageBg || '#1B2A4A' }}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm"
+                style={{ backgroundColor: settings.accentColor || '#00B8A9' }}
+              >
+                25%
+              </div>
+              <span className="text-white font-semibold">{settings.welcomeTitle || 'EduDiscount'}</span>
+            </div>
+            <span className="text-2xl">{settings.welcomeIcon || '🎓'}</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Welcome Page content section */}
       <section className="bg-white rounded-xl shadow p-6 space-y-5">
-        <h2 className="text-lg font-semibold text-navy border-b pb-2">Welcome Page</h2>
+        <h2 className="text-lg font-semibold text-navy border-b pb-2">Welcome Page Content</h2>
 
         {/* Logo URL + live preview */}
         <div>
           <label className="text-xs font-medium text-gray-500 mb-1 block">Logo URL</label>
           <input
             value={settings.logoUrl || ''}
-            onChange={(e) => { setSettings({ ...settings, logoUrl: e.target.value }); setLogoError(false) }}
+            onChange={(e) => { set('logoUrl', e.target.value); setLogoError(false) }}
             placeholder="https://example.com/logo.png"
             className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-teal focus:outline-none text-sm"
           />
@@ -63,7 +166,7 @@ export default function Settings() {
                   onError={() => setLogoError(true)}
                 />
               ) : (
-                <span className="text-4xl">🎓</span>
+                <span className="text-4xl">{settings.welcomeIcon || '🎓'}</span>
               )}
             </div>
             <p className="text-xs text-gray-400">
@@ -77,7 +180,7 @@ export default function Settings() {
             <label className="text-xs font-medium text-gray-500 mb-1 block">{label}</label>
             <input
               value={settings[key] || ''}
-              onChange={(e) => setSettings({ ...settings, [key]: e.target.value })}
+              onChange={(e) => set(key, e.target.value)}
               dir={dir}
               className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-teal focus:outline-none text-sm"
             />
@@ -93,7 +196,7 @@ export default function Settings() {
             <label className="text-xs font-medium text-gray-500 mb-1 block">{label}</label>
             <input
               value={settings[key] || ''}
-              onChange={(e) => setSettings({ ...settings, [key]: e.target.value })}
+              onChange={(e) => set(key, e.target.value)}
               className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-teal focus:outline-none text-sm"
             />
           </div>

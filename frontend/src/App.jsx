@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { ThemeProvider } from './context/ThemeContext'
 import WelcomePage from './pages/WelcomePage'
 import SelectorPage from './pages/SelectorPage'
 import CodePage from './pages/CodePage'
@@ -18,6 +19,7 @@ function RequireAdmin({ children }) {
 
 export default function App() {
   return (
+    <ThemeProvider>
     <Routes>
       <Route path="/" element={<WelcomePage />} />
       <Route path="/select" element={<SelectorPage />} />
@@ -36,5 +38,6 @@ export default function App() {
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
+    </ThemeProvider>
   )
 }

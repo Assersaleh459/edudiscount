@@ -1,32 +1,27 @@
-import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import LanguageToggle from '../components/LanguageToggle'
-import api from '../api/client'
+import { useTheme } from '../context/ThemeContext'
 
 export default function WelcomePage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const theme = useTheme()
   const isAr = i18n.language === 'ar'
-  const [settings, setSettings] = useState(null)
-
-  useEffect(() => {
-    api.get('/public/settings')
-      .then((r) => setSettings(r.data))
-      .catch(() => setSettings({}))
-  }, [])
 
   const title = isAr
-    ? (settings?.welcomeTitleAr || settings?.welcomeTitle || t('appName'))
-    : (settings?.welcomeTitle || t('appName'))
+    ? (theme.welcomeTitleAr || theme.welcomeTitle || t('appName'))
+    : (theme.welcomeTitle || t('appName'))
 
   const subtitle = isAr
-    ? (settings?.welcomeSubtitleAr || settings?.welcomeSubtitle || t('tagline'))
-    : (settings?.welcomeSubtitle || t('tagline'))
+    ? (theme.welcomeSubtitleAr || theme.welcomeSubtitle || t('tagline'))
+    : (theme.welcomeSubtitle || t('tagline'))
+
+  const icon = theme.welcomeIcon || '🎓'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy to-navy-light flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--welcome-bg, #1B2A4A)' }}>
       <header className="flex items-center justify-end px-6 py-4">
         <LanguageToggle />
       </header>
@@ -38,22 +33,24 @@ export default function WelcomePage() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="flex flex-col items-center gap-8"
         >
-          {/* Logo */}
+          {/* Logo / Icon */}
           <div className="w-36 h-36 rounded-3xl bg-white/10 backdrop-blur flex items-center justify-center shadow-2xl overflow-hidden">
-            {settings?.logoUrl ? (
-              <img
-                src={settings.logoUrl}
-                alt="Logo"
-                className="w-full h-full object-contain p-3"
-                onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }}
-              />
-            ) : null}
-            <span
-              className="text-7xl"
-              style={{ display: settings?.logoUrl ? 'none' : 'flex' }}
-            >
-              🎓
-            </span>
+            {theme.logoUrl ? (
+              <>
+                <img
+                  src={theme.logoUrl}
+                  alt="Logo"
+                  className="w-full h-full object-contain p-3"
+                  onError={(e) => {
+                    e.target.style.display = 'none'
+                    e.target.nextSibling.style.display = 'block'
+                  }}
+                />
+                <span className="text-7xl" style={{ display: 'none' }}>{icon}</span>
+              </>
+            ) : (
+              <span className="text-7xl">{icon}</span>
+            )}
           </div>
 
           {/* Text */}
@@ -67,7 +64,8 @@ export default function WelcomePage() {
             onClick={() => navigate('/select')}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
-            className="mt-4 px-10 py-4 bg-white text-navy font-bold text-lg rounded-2xl shadow-xl hover:bg-white/90 transition"
+            className="mt-4 px-10 py-4 bg-white font-bold text-lg rounded-2xl shadow-xl hover:bg-white/90 transition"
+            style={{ color: 'var(--welcome-bg, #1B2A4A)' }}
           >
             {t('getStarted')} →
           </motion.button>

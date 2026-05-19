@@ -43,10 +43,16 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 app.get('/api/public/settings', (req, res) => {
   res.json({
     logoUrl: runtimeSettings.logoUrl,
+    welcomeIcon: runtimeSettings.welcomeIcon,
     welcomeTitle: runtimeSettings.welcomeTitle,
     welcomeTitleAr: runtimeSettings.welcomeTitleAr,
     welcomeSubtitle: runtimeSettings.welcomeSubtitle,
     welcomeSubtitleAr: runtimeSettings.welcomeSubtitleAr,
+    primaryColor: runtimeSettings.primaryColor,
+    accentColor: runtimeSettings.accentColor,
+    welcomePageBg: runtimeSettings.welcomePageBg,
+    selectorPageBg: runtimeSettings.selectorPageBg,
+    codePageBg: runtimeSettings.codePageBg,
   })
 })
 

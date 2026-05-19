@@ -23,7 +23,8 @@ export default function CodeCard({ data }) {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="bg-navy rounded-2xl p-6 text-white shadow-2xl max-w-sm w-full mx-auto"
+      className="rounded-2xl p-6 text-white shadow-2xl max-w-sm w-full mx-auto"
+      style={{ backgroundColor: 'var(--primary, #1B2A4A)' }}
     >
       {/* Header */}
       <div className="mb-4">
@@ -33,7 +34,10 @@ export default function CodeCard({ data }) {
 
       {/* Discount badge */}
       <div className="flex justify-center my-4">
-        <div className="w-28 h-28 rounded-full bg-teal flex flex-col items-center justify-center shadow-lg">
+        <div
+          className="w-28 h-28 rounded-full flex flex-col items-center justify-center shadow-lg"
+          style={{ backgroundColor: 'var(--accent, #00B8A9)' }}
+        >
           <span className="text-3xl font-bold">{data.discountPct}%</span>
           <span className="text-sm font-medium">{t('off')}</span>
         </div>
@@ -48,7 +52,9 @@ export default function CodeCard({ data }) {
         <span className="text-white/40 text-lg">→</span>
         <div className="text-center">
           <p className="text-white/50 text-xs">{t('youPay')}</p>
-          <p className="text-teal font-bold text-xl">{fmt(data.finalPrice, data.currency)}</p>
+          <p className="font-bold text-xl" style={{ color: 'var(--accent, #00B8A9)' }}>
+            {fmt(data.finalPrice, data.currency)}
+          </p>
         </div>
         <div className="text-center">
           <p className="text-white/50 text-xs">{t('youSave')}</p>
@@ -62,7 +68,9 @@ export default function CodeCard({ data }) {
         className="flex items-center justify-between bg-white/10 rounded-xl px-4 py-3 cursor-pointer hover:bg-white/20 transition mb-3"
       >
         <span className="font-mono font-bold text-lg tracking-widest">{data.code}</span>
-        <span className="text-teal text-sm">{copied ? t('copied') : t('copyCode')}</span>
+        <span className="text-sm" style={{ color: 'var(--accent, #00B8A9)' }}>
+          {copied ? t('copied') : t('copyCode')}
+        </span>
       </div>
 
       <p className="text-white/40 text-xs text-center mb-4">{t('validFor')}</p>
@@ -72,7 +80,8 @@ export default function CodeCard({ data }) {
         href={`https://partner-platform.com?code=${data.code}&teacher=${data.platformTeacherId}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="block w-full text-center bg-teal hover:bg-teal-dark text-white font-semibold py-3 rounded-xl transition"
+        className="block w-full text-center text-white font-semibold py-3 rounded-xl transition hover:opacity-90"
+        style={{ backgroundColor: 'var(--accent, #00B8A9)' }}
       >
         {t('useOnPlatform')}
       </a>

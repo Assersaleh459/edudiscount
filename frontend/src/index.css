@@ -5,6 +5,11 @@
 :root {
   --font-main: 'Outfit', sans-serif;
   --font-arabic: 'Tajawal', sans-serif;
+  --primary: #1B2A4A;
+  --accent: #00B8A9;
+  --welcome-bg: #1B2A4A;
+  --selector-bg: #1B2A4A;
+  --code-bg: #1B2A4A;
 }
 
 body {

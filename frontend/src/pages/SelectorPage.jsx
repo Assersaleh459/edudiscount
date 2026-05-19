@@ -6,11 +6,13 @@ import StepProgress from '../components/StepProgress'
 import CascadeSelector from '../components/CascadeSelector'
 import PricePreviewCard from '../components/PricePreviewCard'
 import LanguageToggle from '../components/LanguageToggle'
+import { useTheme } from '../context/ThemeContext'
 import api from '../api/client'
 
 export default function SelectorPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const theme = useTheme()
   const [selection, setSelection] = useState({ school: null, subject: null, teacher: null })
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
@@ -44,11 +46,11 @@ export default function SelectorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy to-navy-light flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--selector-bg, #1B2A4A)' }}>
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🎓</span>
+          <span className="text-2xl">{theme.welcomeIcon || '🎓'}</span>
           <span className="text-white font-bold text-xl">{t('appName')}</span>
         </div>
         <LanguageToggle />
@@ -77,7 +79,10 @@ export default function SelectorPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t('enterEmail')}
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-teal focus:outline-none transition"
+              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none transition"
+              style={{ '--tw-border-opacity': 1 }}
+              onFocus={e => e.target.style.borderColor = 'var(--accent, #00B8A9)'}
+              onBlur={e => e.target.style.borderColor = ''}
             />
 
             {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -86,7 +91,8 @@ export default function SelectorPage() {
               onClick={handleSubmit}
               disabled={!canSubmit}
               className={`w-full py-4 rounded-xl font-bold text-lg transition
-                ${canSubmit ? 'bg-navy text-white hover:bg-navy-light shadow-lg' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+                ${canSubmit ? 'text-white shadow-lg' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+              style={canSubmit ? { backgroundColor: 'var(--primary, #1B2A4A)' } : {}}
             >
               {loading ? t('generating') : t('getCode')}
             </button>

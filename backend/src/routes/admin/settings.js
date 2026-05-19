@@ -9,10 +9,16 @@ router.use(requireAuth)
 // This endpoint exposes non-sensitive settings and allows updating them at runtime
 let runtimeSettings = {
   logoUrl: process.env.LOGO_URL || '',
+  welcomeIcon: process.env.WELCOME_ICON || '🎓',
   welcomeTitle: process.env.WELCOME_TITLE || 'EduDiscount',
   welcomeTitleAr: process.env.WELCOME_TITLE_AR || 'EduDiscount',
   welcomeSubtitle: process.env.WELCOME_SUBTITLE || 'Get your student discount in seconds',
   welcomeSubtitleAr: process.env.WELCOME_SUBTITLE_AR || 'احصل على خصمك الطلابي في ثوانٍ',
+  primaryColor: process.env.PRIMARY_COLOR || '#1B2A4A',
+  accentColor: process.env.ACCENT_COLOR || '#00B8A9',
+  welcomePageBg: process.env.WELCOME_PAGE_BG || '#1B2A4A',
+  selectorPageBg: process.env.SELECTOR_PAGE_BG || '#1B2A4A',
+  codePageBg: process.env.CODE_PAGE_BG || '#1B2A4A',
   partnerApiUrl: process.env.PARTNER_API_URL || '',
   defaultCurrency: process.env.DEFAULT_CURRENCY || 'EGP',
   smtpHost: process.env.SMTP_HOST || '',
@@ -26,7 +32,8 @@ router.get('/', (req, res) => {
 })
 
 router.put('/', (req, res) => {
-  const allowed = ['logoUrl','welcomeTitle','welcomeTitleAr','welcomeSubtitle','welcomeSubtitleAr',
+  const allowed = ['logoUrl','welcomeIcon','welcomeTitle','welcomeTitleAr','welcomeSubtitle','welcomeSubtitleAr',
+    'primaryColor','accentColor','welcomePageBg','selectorPageBg','codePageBg',
     'partnerApiUrl','defaultCurrency','smtpHost','smtpPort','smtpUser','smtpFrom']
   for (const key of allowed) {
     if (req.body[key] !== undefined) runtimeSettings[key] = req.body[key]
