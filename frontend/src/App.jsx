@@ -11,6 +11,7 @@ import Teachers from './pages/admin/Teachers'
 import Codes from './pages/admin/Codes'
 import Reports from './pages/admin/Reports'
 import Settings from './pages/admin/Settings'
+import AccessCodes from './pages/admin/AccessCodes'
 
 function RequireAdmin({ children }) {
   const token = localStorage.getItem('admin_token')
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="subjects" element={<Subjects />} />
         <Route path="teachers" element={<Teachers />} />
         <Route path="codes" element={<Codes />} />
+        <Route path="access-codes" element={<AccessCodes />} />
         <Route path="reports" element={<Reports />} />
         <Route path="settings" element={<Settings />} />
       </Route>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import StepProgress from '../components/StepProgress'
 import CascadeSelector from '../components/CascadeSelector'
 import PricePreviewCard from '../components/PricePreviewCard'
@@ -14,13 +14,52 @@ export default function SelectorPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const theme = useTheme()
+
   const [selection, setSelection] = useState({ school: null, subject: null, teacher: null })
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Verification state
+  const [currentSchool, setCurrentSchool] = useState(null)
+  const [isVerified, setIsVerified] = useState(false)
+  const [verificationToken, setVerificationToken] = useState(null)
+  const [schoolCode, setSchoolCode] = useState('')
+  const [studentCode, setStudentCode] = useState('')
+  const [verifying, setVerifying] = useState(false)
+  const [verifyError, setVerifyError] = useState('')
+
+  function handleSchoolChange(school) {
+    // Reset verification when school changes
+    setIsVerified(false)
+    setVerificationToken(null)
+    setSchoolCode('')
+    setStudentCode('')
+    setVerifyError('')
+    setCurrentSchool(school)
+  }
+
+  async function handleVerify() {
+    setVerifyError('')
+    setVerifying(true)
+    try {
+      const { data } = await api.post('/verify', {
+        schoolId: currentSchool.id,
+        schoolCode,
+        studentCode,
+      })
+      setVerificationToken(data.token)
+      setIsVerified(true)
+    } catch (err) {
+      setVerifyError(err.response?.data?.error || 'Verification failed. Please check your codes.')
+    } finally {
+      setVerifying(false)
+    }
+  }
+
+  const needsVerification = currentSchool?.hasAccessCode && !isVerified
   const currentStep = selection.teacher ? 3 : selection.subject ? 2 : selection.school ? 1 : 0
-  const canSubmit = selection.school && selection.subject && selection.teacher && email && !loading
+  const canSubmit = selection.school && selection.subject && selection.teacher && email && !loading && isVerified
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -36,6 +75,7 @@ export default function SelectorPage() {
         subjectId: selection.subject.id,
         teacherId: selection.teacher.id,
         studentEmail: email,
+        verificationToken,
       })
       navigate(`/code/${data.codeId}`)
     } catch (err) {
@@ -67,7 +107,62 @@ export default function SelectorPage() {
           <StepProgress currentStep={currentStep + 1} />
 
           <div className="bg-white rounded-2xl shadow-xl p-6 space-y-4">
-            <CascadeSelector onSelectionChange={setSelection} />
+            <CascadeSelector
+              onSelectionChange={setSelection}
+              onSchoolChange={handleSchoolChange}
+              isVerified={!currentSchool?.hasAccessCode || isVerified}
+            />
+
+            {/* Verification panel — shown after school selected if it requires codes */}
+            <AnimatePresence>
+              {currentSchool?.hasAccessCode && !isVerified && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="border-2 border-amber-200 bg-amber-50 rounded-xl p-4 space-y-3">
+                    <p className="text-sm font-semibold text-amber-800">🔒 Verify Your Student Access</p>
+                    <p className="text-xs text-amber-600">Enter the school code and your personal student code to continue.</p>
+                    <input
+                      value={schoolCode}
+                      onChange={e => setSchoolCode(e.target.value.toUpperCase())}
+                      placeholder="School Code (e.g. SCH-ABCD1234)"
+                      className="w-full border-2 border-amber-200 rounded-lg px-3 py-2 text-sm focus:border-amber-400 focus:outline-none font-mono bg-white"
+                    />
+                    <input
+                      value={studentCode}
+                      onChange={e => setStudentCode(e.target.value.toUpperCase())}
+                      placeholder="Student Code (e.g. STU-ABCD1234)"
+                      className="w-full border-2 border-amber-200 rounded-lg px-3 py-2 text-sm focus:border-amber-400 focus:outline-none font-mono bg-white"
+                    />
+                    {verifyError && <p className="text-red-500 text-xs">{verifyError}</p>}
+                    <button
+                      onClick={handleVerify}
+                      disabled={verifying || !schoolCode || !studentCode}
+                      className="w-full py-2 bg-amber-500 text-white rounded-lg text-sm font-semibold hover:bg-amber-600 disabled:opacity-50 transition"
+                    >
+                      {verifying ? 'Verifying...' : 'Verify Access'}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Verified badge */}
+            <AnimatePresence>
+              {isVerified && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex items-center gap-2 text-green-600 bg-green-50 border border-green-200 rounded-xl px-3 py-2"
+                >
+                  <span className="text-sm">✓</span>
+                  <span className="text-sm font-medium">Student access verified</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <AnimatePresence>
               {selection.teacher && (
@@ -81,7 +176,6 @@ export default function SelectorPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t('enterEmail')}
               className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none transition"
-              style={{ '--tw-border-opacity': 1 }}
               onFocus={e => e.target.style.borderColor = 'var(--accent, #00B8A9)'}
               onBlur={e => e.target.style.borderColor = ''}
             />

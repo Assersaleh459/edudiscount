@@ -72,7 +72,7 @@ function SearchableDropdown({ placeholder, options, value, onChange, disabled, l
   )
 }
 
-export default function CascadeSelector({ onSelectionChange }) {
+export default function CascadeSelector({ onSelectionChange, isVerified = true, onSchoolChange }) {
   const { t } = useTranslation()
   const [schools, setSchools] = useState([])
   const [subjects, setSubjects] = useState([])
@@ -87,13 +87,18 @@ export default function CascadeSelector({ onSelectionChange }) {
   function selectSchool(school) {
     setSelected({ school, subject: null, teacher: null })
     setSubjects([]); setTeachers([])
+    onSelectionChange({ school, subject: null, teacher: null })
+    if (onSchoolChange) onSchoolChange(school)
+  }
+
+  useEffect(() => {
+    if (!selected.school || !isVerified) return
     setLoading((l) => ({ ...l, subjects: true }))
-    api.get(`/subjects?schoolId=${school.id}`).then((r) => {
+    api.get(`/subjects?schoolId=${selected.school.id}`).then((r) => {
       setSubjects(r.data)
       setLoading((l) => ({ ...l, subjects: false }))
     })
-    onSelectionChange({ school, subject: null, teacher: null })
-  }
+  }, [selected.school, isVerified])
 
   function selectSubject(subject) {
     setSelected((s) => ({ ...s, subject, teacher: null }))
@@ -121,7 +126,7 @@ export default function CascadeSelector({ onSelectionChange }) {
         loading={loading.schools}
       />
       <AnimatePresence>
-        {selected.school && (
+        {selected.school && isVerified && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
             <SearchableDropdown
               placeholder={t('selectSubject')}

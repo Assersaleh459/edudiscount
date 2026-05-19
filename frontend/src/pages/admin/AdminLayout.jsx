@@ -6,6 +6,7 @@ const NAV = [
   { to: '/admin/subjects', label: '📚 Subjects' },
   { to: '/admin/teachers', label: '👨‍🏫 Teachers' },
   { to: '/admin/codes', label: '🎟 Codes' },
+  { to: '/admin/access-codes', label: '🔑 Access Codes' },
   { to: '/admin/reports', label: '📊 Reports' },
   { to: '/admin/settings', label: '⚙ Settings' },
 ]

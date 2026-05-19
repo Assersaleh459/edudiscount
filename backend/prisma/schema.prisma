@@ -16,15 +16,29 @@ model AdminUser {
 }
 
 model School {
-  id         String    @id @default(cuid())
-  name       String    @unique
-  nameAr     String?
-  logoUrl    String?
-  language   String    @default("Arabic")
-  platformId String?
-  isActive   Boolean   @default(true)
-  subjects   Subject[]
-  createdAt  DateTime  @default(now())
+  id           String        @id @default(cuid())
+  name         String        @unique
+  nameAr       String?
+  logoUrl      String?
+  language     String        @default("Arabic")
+  platformId   String?
+  isActive     Boolean       @default(true)
+  accessCode   String?
+  subjects     Subject[]
+  studentCodes StudentCode[]
+  createdAt    DateTime      @default(now())
+}
+
+model StudentCode {
+  id        String   @id @default(cuid())
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  code      String   @unique
+  label     String?
+  maxUses   Int      @default(10)
+  useCount  Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
 }
 
 model Subject {

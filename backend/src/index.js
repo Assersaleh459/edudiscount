@@ -17,6 +17,8 @@ const adminCodesRouter = require('./routes/admin/codes')
 const adminReportsRouter = require('./routes/admin/reports')
 const { router: adminSettingsRouter, runtimeSettings } = require('./routes/admin/settings')
 const adminUploadRouter = require('./routes/admin/upload')
+const adminAccessCodesRouter = require('./routes/admin/accessCodes')
+const verifyRouter = require('./routes/verify')
 
 const app = express()
 
@@ -27,6 +29,7 @@ app.use(express.json())
 app.use('/api/uploads', express.static(path.join(__dirname, '../../uploads')))
 
 // Public routes
+app.use('/api/verify', verifyRouter)
 app.use('/api/schools', schoolsRouter)
 app.use('/api/subjects', subjectsRouter)
 app.use('/api/teachers', teachersRouter)
@@ -43,6 +46,7 @@ app.use('/api/admin/codes', adminCodesRouter)
 app.use('/api/admin/reports', adminReportsRouter)
 app.use('/api/admin/settings', adminSettingsRouter)
 app.use('/api/admin/upload', adminUploadRouter)
+app.use('/api/admin/access-codes', adminAccessCodesRouter)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 

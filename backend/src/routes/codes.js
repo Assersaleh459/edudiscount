@@ -1,5 +1,6 @@
 const express = require('express')
 const { PrismaClient } = require('@prisma/client')
+const jwt = require('jsonwebtoken')
 const { generateDiscountCode } = require('../services/codeGenerator')
 const { codeGenerationLimiter } = require('../middleware/rateLimiter')
 
@@ -8,7 +9,7 @@ const prisma = new PrismaClient()
 
 // Generate a new discount code
 router.post('/generate', codeGenerationLimiter, async (req, res) => {
-  const { schoolId, subjectId, teacherId, studentEmail } = req.body
+  const { schoolId, subjectId, teacherId, studentEmail, verificationToken } = req.body
   if (!schoolId || !subjectId || !teacherId || !studentEmail) {
     return res.status(400).json({ error: 'schoolId, subjectId, teacherId, and studentEmail are required' })
   }
@@ -16,10 +17,32 @@ router.post('/generate', codeGenerationLimiter, async (req, res) => {
     return res.status(400).json({ error: 'Invalid email address' })
   }
 
+  // Verify student access token
+  if (!verificationToken) {
+    return res.status(401).json({ error: 'Access verification required. Please verify your school and student codes.' })
+  }
+  let tokenPayload
   try {
+    tokenPayload = jwt.verify(verificationToken, process.env.JWT_SECRET)
+  } catch {
+    return res.status(401).json({ error: 'Verification expired or invalid. Please verify again.' })
+  }
+  if (tokenPayload.schoolId !== schoolId) {
+    return res.status(403).json({ error: 'Verification mismatch. Please verify again.' })
+  }
+
+  // Check student code is still within limits
+  const sc = await prisma.studentCode.findUnique({ where: { id: tokenPayload.studentCodeId } })
+  if (!sc || !sc.isActive) return res.status(403).json({ error: 'Student code is no longer active.' })
+  if (sc.useCount >= sc.maxUses) return res.status(403).json({ error: `Student code limit reached (${sc.maxUses} uses).` })
+
+  try {
+    await prisma.studentCode.update({ where: { id: sc.id }, data: { useCount: { increment: 1 } } })
     const result = await generateDiscountCode({ schoolId, subjectId, teacherId, studentEmail })
     res.status(201).json(result)
   } catch (e) {
+    // Roll back use count increment on failure
+    await prisma.studentCode.update({ where: { id: sc.id }, data: { useCount: { decrement: 1 } } }).catch(() => {})
     res.status(e.status || 500).json({ error: e.message })
   }
 })
