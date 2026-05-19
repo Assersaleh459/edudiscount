@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api/client'
+import PageIcon from '../../components/PageIcon'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
@@ -27,7 +28,7 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-navy flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-sm">
         <div className="text-center mb-6">
-          <span className="text-4xl">🎓</span>
+          <div className="flex justify-center"><PageIcon size="sm" /></div>
           <h1 className="text-2xl font-bold text-navy mt-2">Admin Login</h1>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">

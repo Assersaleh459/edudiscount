@@ -1,4 +1,5 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import PageIcon from '../../components/PageIcon'
 
 const NAV = [
   { to: '/admin/schools', label: '🏫 Schools' },
@@ -22,7 +23,7 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <aside className="w-56 bg-navy flex flex-col">
         <div className="px-6 py-5 border-b border-white/10">
-          <span className="text-white font-bold text-lg">🎓 EduDiscount</span>
+          <span className="text-white font-bold text-lg flex items-center gap-2"><PageIcon size="sm" /> EduDiscount</span>
           <p className="text-white/50 text-xs mt-0.5">Admin Panel</p>
         </div>
         <nav className="flex-1 py-4">

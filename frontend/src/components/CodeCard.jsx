@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import PageIcon from './PageIcon'
 
 function fmt(piastres, currency) {
   return `${(piastres / 100).toFixed(0)} ${currency}`
@@ -28,7 +29,7 @@ export default function CodeCard({ data }) {
     >
       {/* Header */}
       <div className="mb-4">
-        <p className="text-white/60 text-sm">🎓 {data.schoolName}</p>
+        <p className="text-white/60 text-sm flex items-center gap-1"><PageIcon size="sm" /> {data.schoolName}</p>
         <p className="text-white/80 text-sm">{data.subjectName} • {data.teacherName}</p>
       </div>
 
