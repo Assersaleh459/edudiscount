@@ -12,6 +12,7 @@ Session backups below are auto-logged by the Claude Code Stop hook.
 |---------|------|-------------|
 | [v1.0.1](versions/v1.0.1.md) | 2026-05-19 | Auto-versioned on session end |
 | [v1.0.2](versions/v1.0.2.md) | 2026-05-19 | Auto-versioned on session end |
+| [v1.0.4](versions/v1.0.4.md) | 2026-05-19 | Auto-versioned on session end |
 | [v1.0.0](versions/v1.0.0.md) | 2026-05-19 | Initial working release — full stack on Docker Compose |
 
 ---
@@ -42,3 +43,4 @@ Session backups below are auto-logged by the Claude Code Stop hook.
 | [413a5f7](https://github.com/Assersaleh459/edudiscount/commit/413a5f7) | 2026-05-19 20:50 | session backup |
 
 | [9bc6da9](https://github.com/Assersaleh459/edudiscount/commit/9bc6da9) | 2026-05-19 21:20 | session backup |
+
