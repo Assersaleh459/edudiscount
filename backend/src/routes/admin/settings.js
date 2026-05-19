@@ -1,13 +1,13 @@
 const express = require('express')
+const { PrismaClient } = require('@prisma/client')
 const { requireAuth } = require('../../middleware/auth')
 
 const router = express.Router()
+const prisma = new PrismaClient()
 
 router.use(requireAuth)
 
-// Settings are stored in .env / environment variables
-// This endpoint exposes non-sensitive settings and allows updating them at runtime
-let runtimeSettings = {
+const DEFAULTS = {
   logoUrl: process.env.LOGO_URL || '',
   welcomeIcon: process.env.WELCOME_ICON || '🎓',
   welcomeTitle: process.env.WELCOME_TITLE || 'EduDiscount',
@@ -27,17 +27,42 @@ let runtimeSettings = {
   smtpFrom: process.env.SMTP_FROM || '',
 }
 
+// In-memory cache — loaded from DB on startup
+let runtimeSettings = { ...DEFAULTS }
+
+async function loadFromDb() {
+  try {
+    const rows = await prisma.setting.findMany()
+    for (const { key, value } of rows) {
+      if (key in DEFAULTS) runtimeSettings[key] = value
+    }
+  } catch (e) {
+    console.error('Could not load settings from DB:', e.message)
+  }
+}
+
+loadFromDb()
+
 router.get('/', (req, res) => {
   res.json(runtimeSettings)
 })
 
-router.put('/', (req, res) => {
-  const allowed = ['logoUrl','welcomeIcon','welcomeTitle','welcomeTitleAr','welcomeSubtitle','welcomeSubtitleAr',
-    'primaryColor','accentColor','welcomePageBg','selectorPageBg','codePageBg',
-    'partnerApiUrl','defaultCurrency','smtpHost','smtpPort','smtpUser','smtpFrom']
+router.put('/', async (req, res) => {
+  const allowed = Object.keys(DEFAULTS)
+  const updates = []
   for (const key of allowed) {
-    if (req.body[key] !== undefined) runtimeSettings[key] = req.body[key]
+    if (req.body[key] !== undefined) {
+      runtimeSettings[key] = req.body[key]
+      updates.push(
+        prisma.setting.upsert({
+          where: { key },
+          update: { value: req.body[key] },
+          create: { key, value: req.body[key] },
+        })
+      )
+    }
   }
+  await Promise.all(updates)
   res.json({ success: true, settings: runtimeSettings })
 })
 

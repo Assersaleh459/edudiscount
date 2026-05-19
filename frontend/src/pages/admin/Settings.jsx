@@ -101,19 +101,61 @@ export default function Settings() {
       <section className="bg-white rounded-xl shadow p-6 space-y-6">
         <h2 className="text-lg font-semibold text-navy border-b pb-2">Appearance</h2>
 
-        {/* Icon */}
+        {/* Logo / Icon — used everywhere on all pages */}
         <div>
-          <label className="text-xs font-medium text-gray-500 mb-1 block">Page Icon (emoji)</label>
-          <div className="flex items-center gap-3">
-            <input
-              value={settings.welcomeIcon || ''}
-              onChange={(e) => set('welcomeIcon', e.target.value)}
-              placeholder="🎓"
-              className="w-24 border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-teal focus:outline-none text-2xl text-center"
-            />
-            <span className="text-4xl">{settings.welcomeIcon || '🎓'}</span>
-            <p className="text-xs text-gray-400">Shown in page headers when no logo is set</p>
+          <label className="text-xs font-medium text-gray-500 mb-2 block">Logo / Icon <span className="text-gray-400 font-normal">(shown on all pages)</span></label>
+
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+
+          <div className="flex items-start gap-4">
+            {/* Preview box */}
+            <div className="w-20 h-20 rounded-xl bg-navy/10 flex items-center justify-center overflow-hidden border-2 border-gray-200 flex-shrink-0">
+              {settings.logoUrl && !logoError ? (
+                <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-contain p-1" onError={() => setLogoError(true)} />
+              ) : (
+                <span className="text-4xl">{settings.welcomeIcon || '🎓'}</span>
+              )}
+            </div>
+
+            <div className="flex-1 space-y-2">
+              {/* Upload button */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current.click()}
+                disabled={uploading}
+                className="w-full px-4 py-2 bg-navy text-white text-sm rounded-lg hover:bg-navy-light transition disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {uploading ? <><span className="animate-spin">⏳</span> Uploading...</> : <><span>📁</span> Upload Image</>}
+              </button>
+
+              {/* Or URL */}
+              <input
+                value={settings.logoUrl || ''}
+                onChange={(e) => { set('logoUrl', e.target.value); setLogoError(false) }}
+                placeholder="Or paste image URL..."
+                className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-teal focus:outline-none text-sm"
+              />
+
+              {settings.logoUrl && (
+                <button type="button" onClick={() => { set('logoUrl', ''); setLogoError(false) }} className="text-xs text-red-400 hover:text-red-600">
+                  Remove image — use emoji fallback
+                </button>
+              )}
+            </div>
           </div>
+
+          {/* Emoji fallback (only shown when no image) */}
+          {!settings.logoUrl && (
+            <div className="mt-3 flex items-center gap-3">
+              <label className="text-xs text-gray-400 whitespace-nowrap">Fallback emoji:</label>
+              <input
+                value={settings.welcomeIcon || ''}
+                onChange={(e) => set('welcomeIcon', e.target.value)}
+                placeholder="🎓"
+                className="w-20 border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-teal focus:outline-none text-2xl text-center"
+              />
+            </div>
+          )}
         </div>
 
         {/* Per-page background colors */}
@@ -195,72 +237,7 @@ export default function Settings() {
 
       {/* Welcome Page content section */}
       <section className="bg-white rounded-xl shadow p-6 space-y-5">
-        <h2 className="text-lg font-semibold text-navy border-b pb-2">Welcome Page Content</h2>
-
-        {/* Logo upload + URL + live preview */}
-        <div>
-          <label className="text-xs font-medium text-gray-500 mb-2 block">Logo</label>
-
-          {/* Upload button */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleLogoUpload}
-            className="hidden"
-          />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current.click()}
-            disabled={uploading}
-            className="mb-2 px-4 py-2 bg-navy text-white text-sm rounded-lg hover:bg-navy-light transition disabled:opacity-50 flex items-center gap-2"
-          >
-            {uploading ? (
-              <><span className="animate-spin">⏳</span> Uploading...</>
-            ) : (
-              <><span>📁</span> Upload Image</>
-            )}
-          </button>
-
-          {/* Or paste URL */}
-          <p className="text-xs text-gray-400 mb-1">Or paste a URL:</p>
-          <input
-            value={settings.logoUrl || ''}
-            onChange={(e) => { set('logoUrl', e.target.value); setLogoError(false) }}
-            placeholder="https://example.com/logo.png"
-            className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-teal focus:outline-none text-sm"
-          />
-
-          {/* Preview */}
-          <div className="mt-3 flex items-center gap-4">
-            <div className="w-20 h-20 rounded-xl bg-navy/10 flex items-center justify-center overflow-hidden border border-gray-200">
-              {settings.logoUrl && !logoError ? (
-                <img
-                  src={settings.logoUrl}
-                  alt="Logo preview"
-                  className="w-full h-full object-contain p-1"
-                  onError={() => setLogoError(true)}
-                />
-              ) : (
-                <span className="text-4xl">{settings.welcomeIcon || '🎓'}</span>
-              )}
-            </div>
-            <div>
-              <p className="text-xs text-gray-400">
-                {settings.logoUrl && !logoError ? 'Preview above' : 'No logo set — icon shown instead'}
-              </p>
-              {settings.logoUrl && (
-                <button
-                  type="button"
-                  onClick={() => { set('logoUrl', ''); setLogoError(false) }}
-                  className="text-xs text-red-400 hover:text-red-600 mt-1"
-                >
-                  Remove logo
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+        <h2 className="text-lg font-semibold text-navy border-b pb-2">Welcome Page Text</h2>
 
         {welcomeFields.map(({ key, label, dir }) => (
           <div key={key}>
