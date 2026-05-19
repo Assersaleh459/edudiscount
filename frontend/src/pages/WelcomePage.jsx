@@ -22,7 +22,12 @@ export default function WelcomePage() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--welcome-bg, #1B2A4A)' }}>
-      <header className="flex items-center justify-end px-6 py-4">
+      {/* Header — always shows icon + app name, like other pages */}
+      <header className="flex items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">{icon}</span>
+          <span className="text-white font-bold text-xl">{t('appName')}</span>
+        </div>
         <LanguageToggle />
       </header>
 
@@ -33,7 +38,7 @@ export default function WelcomePage() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="flex flex-col items-center gap-8"
         >
-          {/* Logo / Icon */}
+          {/* Center: logo image if set, otherwise big icon */}
           <div className="flex items-center justify-center">
             {theme.logoUrl ? (
               <>
