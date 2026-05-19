@@ -42,7 +42,7 @@ export default function WelcomePage() {
           {/* Text */}
           <div className="space-y-3">
             <h1 className="text-4xl font-bold text-white">{title}</h1>
-            <p className="text-white/70 text-lg max-w-sm">{subtitle}</p>
+            <p className="text-white/70 text-lg max-w-lg">{subtitle}</p>
           </div>
 
           {/* CTA */}
