@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EduDiscount — Technical Overview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Tajawal:wght@300;400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --navy: #1B2A4A;
+    --teal: #00B8A9;
+    --teal-light: #e0faf8;
+    --code-bg: #0f1923;
+    --code-border: #1e2d3d;
+    --light: #F8FAFC;
+    --text: #1e293b;
+    --muted: #64748b;
+    --green: #22c55e;
+    --orange: #f59e0b;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: var(--text);
+    background: white;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    background: var(--code-bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300B8A9' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .cover-tag {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--teal);
+    font-size: 12px;
+    margin-bottom: 24px;
+    opacity: 0.8;
+  }
+
+  .cover h1 {
+    font-size: 72px;
+    font-weight: 800;
+    color: white;
+    line-height: 1.05;
+    letter-spacing: -3px;
+    margin-bottom: 12px;
+  }
+
+  .cover h1 span { color: var(--teal); }
+
+  .cover .sub {
+    font-size: 22px;
+    color: rgba(255,255,255,0.45);
+    font-weight: 300;
+    margin-bottom: 60px;
+    max-width: 580px;
+    line-height: 1.5;
+  }
+
+  .tech-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 60px;
+  }
+
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  .badge-teal  { background: rgba(0,184,169,0.15); color: var(--teal); border: 1px solid rgba(0,184,169,0.3); }
+  .badge-blue  { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  .badge-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .badge-purple{ background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
+  .badge-orange{ background: rgba(245,158,11,0.15); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
+
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+  }
+
+  .cover-meta-item .lbl { font-size: 10px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .cover-meta-item .val { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 600; }
+
+  /* ── PAGE ── */
+  .page {
+    padding: 60px 72px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-dark {
+    background: var(--code-bg);
+    color: rgba(255,255,255,0.85);
+  }
+
+  .page-alt { background: var(--light); }
+
+  .section-label {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .section-label .pill {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--teal);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 14px;
+    border-radius: 6px;
+  }
+
+  .section-label .line { flex: 1; height: 1px; background: #e2e8f0; }
+  .page-dark .section-label .line { background: rgba(255,255,255,0.1); }
+
+  h2 {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1.15;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+  }
+
+  h2 span { color: var(--teal); }
+  .page-dark h2 { color: white; }
+
+  .lead {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 680px;
+    margin-bottom: 40px;
+    line-height: 1.7;
+  }
+
+  .page-dark .lead { color: rgba(255,255,255,0.5); }
+
+  /* ── ARCH DIAGRAM ── */
+  .arch {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr 60px 1fr 60px 1fr;
+    align-items: center;
+    gap: 0;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--code-border);
+    border-radius: 16px;
+    padding: 32px 24px;
+    margin-bottom: 32px;
+  }
+
+  .arch-box {
+    background: rgba(0,184,169,0.08);
+    border: 1px solid rgba(0,184,169,0.25);
+    border-radius: 12px;
+    padding: 20px 16px;
+    text-align: center;
+  }
+
+  .arch-box .icon { font-size: 28px; margin-bottom: 8px; }
+  .arch-box .name { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--teal); font-weight: 600; margin-bottom: 4px; }
+  .arch-box .desc { font-size: 11px; color: rgba(255,255,255,0.4); }
+
+  .arch-arrow { text-align: center; color: rgba(255,255,255,0.25); font-size: 20px; }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .code-block .code-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--code-border);
+  }
+
+  .code-dots { display: flex; gap: 6px; }
+  .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #ff5f56; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green { background: #27c93f; }
+
+  .code-filename {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-left: 8px;
+  }
+
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.75);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .c-key    { color: #c792ea; }
+  .c-str    { color: #c3e88d; }
+  .c-num    { color: #f78c6c; }
+  .c-comment{ color: #546e7a; font-style: italic; }
+  .c-teal   { color: var(--teal); }
+  .c-fn     { color: #82aaff; }
+  .c-op     { color: #89ddff; }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 32px;
+    font-size: 12px;
+  }
+
+  thead tr { background: var(--navy); }
+  thead th { color: white; padding: 12px 16px; text-align: left; font-weight: 600; font-size: 11px; letter-spacing: 0.5px; }
+  thead th:first-child { border-radius: 8px 0 0 0; }
+  thead th:last-child { border-radius: 0 8px 0 0; }
+  tbody tr { border-bottom: 1px solid #f1f5f9; }
+  tbody tr:nth-child(even) { background: var(--light); }
+  tbody td { padding: 11px 16px; color: var(--text); vertical-align: top; }
+  tbody td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--teal); font-weight: 600; }
+
+  .method {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .get    { background: #dcfce7; color: #16a34a; }
+  .post   { background: #dbeafe; color: #1d4ed8; }
+  .put    { background: #fef9c3; color: #854d0e; }
+  .delete { background: #fee2e2; color: #dc2626; }
+
+  /* ── FLOW GRID ── */
+  .flow-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: flex-start;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 18px 20px;
+    gap: 20px;
+  }
+
+  .flow-row:last-child { border-bottom: none; }
+  .flow-row:nth-child(even) { background: var(--light); }
+
+  .flow-num {
+    width: 28px; height: 28px;
+    background: var(--navy);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0; margin-top: 1px;
+  }
+
+  .flow-content h4 { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .flow-content p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .flow-content code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    background: #f1f5f9;
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--navy);
+  }
+
+  /* ── SCHEMA GRID ── */
+  .schema-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .schema-box {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .schema-box .model-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: #c792ea;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--code-border);
+  }
+
+  .schema-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+
+  .sf-name { color: #82aaff; min-width: 120px; }
+  .sf-type { color: #f78c6c; min-width: 80px; }
+  .sf-mod  { color: #546e7a; font-size: 10px; }
+
+  /* ── SECURITY ── */
+  .security-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .security-card {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border-top: 3px solid var(--teal);
+  }
+
+  .security-card h4 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .security-card ul { list-style: none; }
+  .security-card ul li { font-size: 12px; color: var(--muted); padding: 4px 0; padding-left: 16px; position: relative; line-height: 1.5; }
+  .security-card ul li::before { content: '→'; position: absolute; left: 0; color: var(--teal); font-weight: 700; }
+
+  /* ── ARABIC SECTION ── */
+  .ar-page {
+    direction: rtl;
+    font-family: 'Tajawal', sans-serif;
+    padding: 60px 72px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ar-page .section-label { flex-direction: row-reverse; }
+  .ar-page .section-label .pill { font-family: 'Tajawal', sans-serif; letter-spacing: 0; }
+
+  .ar-page h2 { letter-spacing: 0; }
+  .ar-page .lead { text-align: right; }
+  .ar-page table { direction: rtl; }
+  .ar-page thead th { text-align: right; }
+  .ar-page tbody td { text-align: right; }
+  .ar-page tbody td:first-child { text-align: left; direction: ltr; }
+
+  .ar-page .flow-row { flex-direction: row-reverse; }
+  .ar-page .flow-content h4, .ar-page .flow-content p { text-align: right; }
+
+  .ar-page .schema-grid { direction: ltr; }
+  .ar-page .security-card ul li { padding-right: 16px; padding-left: 0; }
+  .ar-page .security-card ul li::before { right: 0; left: auto; }
+
+  @media print {
+    .page, .cover, .ar-page { page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ COVER ══════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-tag">// EduDiscount Platform · Technical Reference · 2026</div>
+  <h1>Technical<br><span>Deep Dive</span></h1>
+  <p class="sub">Architecture, APIs, Database Schema, Security Model, and Deployment Guide</p>
+
+  <div class="tech-badges">
+    <span class="badge badge-green">Node.js 20</span>
+    <span class="badge badge-teal">Express 4</span>
+    <span class="badge badge-blue">PostgreSQL 15</span>
+    <span class="badge badge-blue">Prisma ORM</span>
+    <span class="badge badge-orange">Redis 7</span>
+    <span class="badge badge-purple">React 18 + Vite</span>
+    <span class="badge badge-teal">Tailwind CSS</span>
+    <span class="badge badge-green">Docker Compose</span>
+    <span class="badge badge-orange">Nginx</span>
+    <span class="badge badge-purple">JWT Auth</span>
+    <span class="badge badge-blue">Nodemailer</span>
+    <span class="badge badge-green">Framer Motion</span>
+  </div>
+
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="lbl">Version</div>
+      <div class="val">1.0.4</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="lbl">Services</div>
+      <div class="val">5 Docker containers</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="lbl">Database</div>
+      <div class="val">6 Prisma models</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="lbl">API Endpoints</div>
+      <div class="val">30+ routes</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="lbl">Languages</div>
+      <div class="val">AR + EN (i18n)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ARCHITECTURE ══════════════════════════ -->
+<div class="page page-dark">
+  <div class="section-label">
+    <div class="pill">01 · Architecture</div>
+    <div class="line"></div>
+  </div>
+
+  <h2>System <span>Architecture</span></h2>
+  <p class="lead">A microservices-style architecture running in Docker Compose. All external traffic enters through Nginx, which routes API calls to the Node.js backend and all other requests to the static React frontend.</p>
+
+  <div class="arch">
+    <div class="arch-box">
+      <div class="icon">🌐</div>
+      <div class="name">Browser</div>
+      <div class="desc">React SPA<br>Port 80/443</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box">
+      <div class="icon">🔀</div>
+      <div class="name">Nginx</div>
+      <div class="desc">Reverse proxy<br>SSL termination</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box">
+      <div class="icon">⚙️</div>
+      <div class="name">Express API</div>
+      <div class="desc">Node.js 20<br>Port 3001</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box">
+      <div class="icon">🗄</div>
+      <div class="name">PostgreSQL</div>
+      <div class="desc">Prisma ORM<br>Port 5432</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div></div>
+      <span class="code-filename">docker-compose.yml — service topology</span>
+    </div>
+    <pre>
+<span class="c-key">services:</span>
+  <span class="c-teal">nginx</span>:       <span class="c-comment"># Entry point — routes /api → backend, / → frontend</span>
+    <span class="c-key">ports:</span> [<span class="c-str">"80:80"</span>, <span class="c-str">"443:443"</span>]
+    <span class="c-key">depends_on:</span> [backend, frontend]
+
+  <span class="c-teal">frontend</span>:    <span class="c-comment"># Vite build served by nginx:alpine (static)</span>
+    <span class="c-key">build:</span> <span class="c-str">./frontend</span>
+
+  <span class="c-teal">backend</span>:     <span class="c-comment"># Express API — runs migrate + seed on startup</span>
+    <span class="c-key">build:</span> <span class="c-str">./backend</span>
+    <span class="c-key">environment:</span> DATABASE_URL, REDIS_URL, JWT_SECRET, SMTP_*
+    <span class="c-key">volumes:</span> [uploads_data:/app/uploads]
+    <span class="c-key">depends_on:</span> [postgres, redis]
+
+  <span class="c-teal">postgres</span>:    <span class="c-comment"># PostgreSQL 15-alpine with named volume</span>
+    <span class="c-key">image:</span> <span class="c-str">postgres:15-alpine</span>
+    <span class="c-key">volumes:</span> [pg_data:/var/lib/postgresql/data]
+
+  <span class="c-teal">redis</span>:       <span class="c-comment"># Redis 7-alpine for code TTL caching</span>
+    <span class="c-key">image:</span> <span class="c-str">redis:7-alpine</span>
+
+<span class="c-key">volumes:</span>
+  pg_data:      <span class="c-comment"># Persistent database storage</span>
+  uploads_data: <span class="c-comment"># Persistent uploaded logo storage</span></pre>
+  </div>
+</div>
+
+<!-- ══ DATABASE SCHEMA ════════════════════════ -->
+<div class="page page-alt">
+  <div class="section-label">
+    <div class="pill">02 · Database</div>
+    <div class="line"></div>
+  </div>
+
+  <h2>Database <span>Schema</span></h2>
+  <p class="lead">PostgreSQL managed via Prisma ORM. 6 models with cascade relationships. Migrations are applied automatically on container startup via <code style="font-family:monospace;background:#e2e8f0;padding:2px 6px;border-radius:4px;font-size:12px">prisma migrate deploy</code>.</p>
+
+  <div class="schema-grid">
+    <div class="schema-box">
+      <div class="model-name">model AdminUser</div>
+      <div class="schema-field"><span class="sf-name">id</span><span class="sf-type">String</span><span class="sf-mod">@id @default(cuid())</span></div>
+      <div class="schema-field"><span class="sf-name">email</span><span class="sf-type">String</span><span class="sf-mod">@unique</span></div>
+      <div class="schema-field"><span class="sf-name">passwordHash</span><span class="sf-type">String</span><span class="sf-mod">bcrypt · cost 10</span></div>
+      <div class="schema-field"><span class="sf-name">createdAt</span><span class="sf-type">DateTime</span><span class="sf-mod">@default(now())</span></div>
+    </div>
+    <div class="schema-box">
+      <div class="model-name">model School</div>
+      <div class="schema-field"><span class="sf-name">id</span><span class="sf-type">String</span><span class="sf-mod">@id @default(cuid())</span></div>
+      <div class="schema-field"><span class="sf-name">name</span><span class="sf-type">String</span><span class="sf-mod">@unique</span></div>
+      <div class="schema-field"><span class="sf-name">nameAr</span><span class="sf-type">String?</span><span class="sf-mod">Arabic name</span></div>
+      <div class="schema-field"><span class="sf-name">accessCode</span><span class="sf-type">String?</span><span class="sf-mod">school-level gate</span></div>
+      <div class="schema-field"><span class="sf-name">isActive</span><span class="sf-type">Boolean</span><span class="sf-mod">@default(true)</span></div>
+      <div class="schema-field"><span class="sf-name">subjects</span><span class="sf-type">Subject[]</span><span class="sf-mod">cascade delete</span></div>
+      <div class="schema-field"><span class="sf-name">studentCodes</span><span class="sf-type">StudentCode[]</span><span class="sf-mod">cascade delete</span></div>
+    </div>
+    <div class="schema-box">
+      <div class="model-name">model StudentCode</div>
+      <div class="schema-field"><span class="sf-name">id</span><span class="sf-type">String</span><span class="sf-mod">@id @default(cuid())</span></div>
+      <div class="schema-field"><span class="sf-name">schoolId</span><span class="sf-type">String</span><span class="sf-mod">FK → School</span></div>
+      <div class="schema-field"><span class="sf-name">code</span><span class="sf-type">String</span><span class="sf-mod">@unique · STU-XXXXXX</span></div>
+      <div class="schema-field"><span class="sf-name">label</span><span class="sf-type">String?</span><span class="sf-mod">student name/ID</span></div>
+      <div class="schema-field"><span class="sf-name">maxUses</span><span class="sf-type">Int</span><span class="sf-mod">@default(10)</span></div>
+      <div class="schema-field"><span class="sf-name">useCount</span><span class="sf-type">Int</span><span class="sf-mod">@default(0)</span></div>
+      <div class="schema-field"><span class="sf-name">isActive</span><span class="sf-type">Boolean</span><span class="sf-mod">@default(true)</span></div>
+    </div>
+    <div class="schema-box">
+      <div class="model-name">model Teacher</div>
+      <div class="schema-field"><span class="sf-name">id</span><span class="sf-type">String</span><span class="sf-mod">@id @default(cuid())</span></div>
+      <div class="schema-field"><span class="sf-name">subjectId</span><span class="sf-type">String</span><span class="sf-mod">FK → Subject</span></div>
+      <div class="schema-field"><span class="sf-name">coursePrice</span><span class="sf-type">Int</span><span class="sf-mod">piastres (÷100 = EGP)</span></div>
+      <div class="schema-field"><span class="sf-name">discountPct</span><span class="sf-type">Int</span><span class="sf-mod">e.g. 25 = 25% off</span></div>
+      <div class="schema-field"><span class="sf-name">platformTeacherId</span><span class="sf-type">String</span><span class="sf-mod">external ID</span></div>
+      <div class="schema-field"><span class="sf-name">codes</span><span class="sf-type">DiscountCode[]</span><span class="sf-mod"></span></div>
+    </div>
+    <div class="schema-box">
+      <div class="model-name">model DiscountCode</div>
+      <div class="schema-field"><span class="sf-name">id</span><span class="sf-type">String</span><span class="sf-mod">@id @default(cuid())</span></div>
+      <div class="schema-field"><span class="sf-name">code</span><span class="sf-type">String</span><span class="sf-mod">@unique · EDU-XXX-YYYY-ZZZZ</span></div>
+      <div class="schema-field"><span class="sf-name">studentEmail</span><span class="sf-type">String</span></div>
+      <div class="schema-field"><span class="sf-name">originalPrice</span><span class="sf-type">Int</span><span class="sf-mod">snapshot at generation</span></div>
+      <div class="schema-field"><span class="sf-name">discountPct</span><span class="sf-type">Int</span><span class="sf-mod">snapshot at generation</span></div>
+      <div class="schema-field"><span class="sf-name">finalPrice</span><span class="sf-type">Int</span><span class="sf-mod">pre-calculated</span></div>
+      <div class="schema-field"><span class="sf-name">status</span><span class="sf-type">String</span><span class="sf-mod">ACTIVE | USED | EXPIRED</span></div>
+      <div class="schema-field"><span class="sf-name">expiresAt</span><span class="sf-type">DateTime</span><span class="sf-mod">now() + 48h</span></div>
+    </div>
+    <div class="schema-box">
+      <div class="model-name">model Setting</div>
+      <div class="schema-field"><span class="sf-name">key</span><span class="sf-type">String</span><span class="sf-mod">@id — e.g. "logoUrl"</span></div>
+      <div class="schema-field"><span class="sf-name">value</span><span class="sf-type">String</span><span class="sf-mod">all settings as text</span></div>
+      <div style="margin-top:10px; font-size:10.5px; color:#546e7a; font-family:'JetBrains Mono',monospace;">
+        // Stores: logoUrl, welcomeTitle(Ar),<br>
+        // welcomeSubtitle(Ar), primaryColor,<br>
+        // accentColor, *PageBg, smtpHost, etc.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ API ENDPOINTS ══════════════════════════ -->
+<div class="page">
+  <div class="section-label">
+    <div class="pill">03 · API Reference</div>
+    <div class="line"></div>
+  </div>
+
+  <h2>API <span>Endpoints</span></h2>
+  <p class="lead">All endpoints are prefixed with <code style="font-family:monospace;background:#f1f5f9;padding:2px 8px;border-radius:4px">/api</code>. Admin routes require a JWT Bearer token obtained from the login endpoint. Public routes are open.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Method</th>
+        <th>Route</th>
+        <th>Auth</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="method get">GET</span></td><td>/schools</td><td>—</td><td>List active schools (includes hasAccessCode flag)</td></tr>
+      <tr><td><span class="method get">GET</span></td><td>/subjects?schoolId=</td><td>—</td><td>List active subjects for a school</td></tr>
+      <tr><td><span class="method get">GET</span></td><td>/teachers?subjectId=</td><td>—</td><td>List active teachers with coursePrice and discountPct</td></tr>
+      <tr><td><span class="method post">POST</span></td><td>/verify</td><td>—</td><td>Validate school code + student code → returns 4h JWT</td></tr>
+      <tr><td><span class="method post">POST</span></td><td>/codes/generate</td><td>verify JWT</td><td>Generate discount code; increments studentCode.useCount</td></tr>
+      <tr><td><span class="method get">GET</span></td><td>/codes/:codeId</td><td>—</td><td>Fetch code details with teacher/school/pricing info</td></tr>
+      <tr><td><span class="method post">POST</span></td><td>/codes/resend</td><td>—</td><td>Resend existing active code to student email</td></tr>
+      <tr><td><span class="method post">POST</span></td><td>/codes/:codeId/redeem</td><td>—</td><td>Mark code as USED (called by partner platform)</td></tr>
+      <tr><td><span class="method get">GET</span></td><td>/public/settings</td><td>—</td><td>Returns theme/branding settings for frontend rendering</td></tr>
+      <tr><td><span class="method post">POST</span></td><td>/admin/auth/login</td><td>—</td><td>Email + password → returns admin JWT</td></tr>
+      <tr><td><span class="method get">GET</span></td><td>/admin/schools</td><td>admin</td><td>List all schools</td></tr>
+      <tr><td><span class="method post">POST</span></td><td>/admin/schools</td><td>admin</td><td>Create school</td></tr>
+      <tr><td><span class="method put">PUT</span></td><td>/admin/schools/:id</td><td>admin</td><td>Update school</td></tr>
+      <tr><td><span class="method delete">DELETE</span></td><td>/admin/schools/:id</td><td>admin</td><td>Delete school (cascades subjects + teachers)</td></tr>
+      <tr><td><span class="method get">GET</span></td><td>/admin/access-codes/schools</td><td>admin</td><td>List schools with their access codes</td></tr>
+      <tr><td><span class="method post">POST</span></td><td>/admin/access-codes/schools/:id/generate</td><td>admin</td><td>Generate/regenerate school access code</td></tr>
+      <tr><td><span class="method get">GET</span></td><td>/admin/access-codes/students?schoolId=</td><td>admin</td><td>List student codes for a school</td></tr>
+      <tr><td><span class="method post">POST</span></td><td>/admin/access-codes/students/generate</td><td>admin</td><td>Bulk generate student codes (up to 500)</td></tr>
+      <tr><td><span class="method put">PUT</span></td><td>/admin/access-codes/students/:id</td><td>admin</td><td>Update label, maxUses, or isActive</td></tr>
+      <tr><td><span class="method delete">DELETE</span></td><td>/admin/access-codes/students/:id</td><td>admin</td><td>Delete student code</td></tr>
+      <tr><td><span class="method get">GET</span></td><td>/admin/access-codes/students/export</td><td>admin</td><td>Export student codes as CSV</td></tr>
+      <tr><td><span class="method get">GET</span></td><td>/admin/reports</td><td>admin</td><td>Stats: codes/month, redemption rates, discount totals</td></tr>
+      <tr><td><span class="method get">GET</span></td><td>/admin/settings</td><td>admin</td><td>Get all platform settings</td></tr>
+      <tr><td><span class="method put">PUT</span></td><td>/admin/settings</td><td>admin</td><td>Save settings to DB (persists across restarts)</td></tr>
+      <tr><td><span class="method post">POST</span></td><td>/admin/upload</td><td>admin</td><td>Upload logo image (max 5MB, jpg/png/gif/webp/svg)</td></tr>
+      <tr><td><span class="method post">POST</span></td><td>/webhooks/partner-redemption</td><td>HMAC</td><td>Inbound webhook from partner platform (HMAC-SHA256 verified)</td></tr>
+      <tr><td><span class="method post">POST</span></td><td>/mock-partner/receive</td><td>—</td><td>Dev mock: logs incoming discount registration, returns 200</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══ CODE GENERATION FLOW ════════════════════ -->
+<div class="page page-alt">
+  <div class="section-label">
+    <div class="pill">04 · Core Logic</div>
+    <div class="line"></div>
+  </div>
+
+  <h2>Discount Code <span>Generation Flow</span></h2>
+  <p class="lead">The code generation pipeline validates, calculates, stores, notifies, and integrates — all in a single request with async side-effects for email and partner notification.</p>
+
+  <div class="flow-grid">
+    <div class="flow-row">
+      <div class="flow-num">1</div>
+      <div class="flow-content">
+        <h4>Verify JWT Token</h4>
+        <p>Extract <code>verificationToken</code> from request body. Decode JWT to get <code>schoolId</code> and <code>studentCodeId</code>. Reject if expired or schoolId mismatch.</p>
+      </div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-num">2</div>
+      <div class="flow-content">
+        <h4>Validate Entity Chain</h4>
+        <p>Confirm school → subject → teacher chain is valid, all active, and the teacher belongs to the subject which belongs to the school.</p>
+      </div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-num">3</div>
+      <div class="flow-content">
+        <h4>Rate Limit Check</h4>
+        <p>Max 3 codes per (studentEmail + teacherId) in 24h — checked in DB. Returns HTTP 429 with Retry-After header on violation.</p>
+      </div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-num">4</div>
+      <div class="flow-content">
+        <h4>Price Snapshot</h4>
+        <p>Calculate: <code>originalPrice = teacher.coursePrice</code>, <code>finalPrice = originalPrice - round(originalPrice × discountPct / 100)</code>. Snapshot prevents price changes affecting existing codes.</p>
+      </div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-num">5</div>
+      <div class="flow-content">
+        <h4>Generate Unique Code</h4>
+        <p>Format: <code>EDU-{INITIALS}-{YEAR}-{RANDOM6}</code> using uppercase alphanumeric. Collision-retry up to 5 times. Stored with <code>expiresAt = now() + 48h</code>.</p>
+      </div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-num">6</div>
+      <div class="flow-content">
+        <h4>Save to PostgreSQL + Redis Cache</h4>
+        <p>Persist DiscountCode record. Cache in Redis: <code>SET code:{codeId} {status} EX 172800</code> (48h TTL) for fast status lookups.</p>
+      </div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-num">7</div>
+      <div class="flow-content">
+        <h4>Increment Student Code Usage</h4>
+        <p>Atomically increment <code>studentCode.useCount</code>. If <code>useCount ≥ maxUses</code>, the next generation attempt will be rejected at the verify step.</p>
+      </div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-num">8</div>
+      <div class="flow-content">
+        <h4>Send Email (async)</h4>
+        <p>Fire-and-forget via Nodemailer: HTML email with code, price breakdown, and expiry. Uses SMTP_HOST/USER/PASS from environment.</p>
+      </div>
+    </div>
+    <div class="flow-row">
+      <div class="flow-num">9</div>
+      <div class="flow-content">
+        <h4>POST to Partner Webhook (async)</h4>
+        <p>Sign payload with HMAC-SHA256 using <code>PARTNER_WEBHOOK_SECRET</code>. POST to <code>PARTNER_API_URL</code> with retry (3× exponential backoff). Logs to IntegrationLog table.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SECURITY ════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">
+    <div class="pill">05 · Security</div>
+    <div class="line"></div>
+  </div>
+
+  <h2>Security <span>Model</span></h2>
+  <p class="lead">Multiple layers of protection covering authentication, access control, abuse prevention, and data integrity.</p>
+
+  <div class="security-grid">
+    <div class="security-card">
+      <h4>🔐 Authentication</h4>
+      <ul>
+        <li>Admin: JWT signed with HS256, stored in localStorage, sent as Bearer token</li>
+        <li>Student: Short-lived 4h verification JWT issued after double-code check</li>
+        <li>Webhook: HMAC-SHA256 signature on all outbound partner calls</li>
+        <li>Inbound webhooks: HMAC signature verified before processing</li>
+        <li>Passwords hashed with bcrypt (cost factor 10)</li>
+      </ul>
+    </div>
+    <div class="security-card">
+      <h4>🛡 Access Control</h4>
+      <ul>
+        <li>School-level access code — one per school, admin-generated</li>
+        <li>Student-level code — unique per student, configurable max uses</li>
+        <li>Both codes required before any discount code can be generated</li>
+        <li>Schools without access codes allow open access (backward compatible)</li>
+        <li>Admin middleware on all /admin/* routes via requireAuth()</li>
+      </ul>
+    </div>
+    <div class="security-card">
+      <h4>⚡ Abuse Prevention</h4>
+      <ul>
+        <li>IP-level rate limiting via express-rate-limit on all public routes</li>
+        <li>Email + teacher combination limited to 3 codes per 24 hours</li>
+        <li>Student code useCount checked atomically before each generation</li>
+        <li>All codes expire automatically after 48 hours</li>
+        <li>Unique constraint on code strings prevents duplicates</li>
+      </ul>
+    </div>
+    <div class="security-card">
+      <h4>🔒 Data Protection</h4>
+      <ul>
+        <li>All secrets in environment variables, never in code</li>
+        <li>PostgreSQL and Redis not exposed outside Docker network</li>
+        <li>File uploads restricted: max 5MB, image MIME types only</li>
+        <li>Uploaded files stored in named Docker volume, served via /api/uploads</li>
+        <li>Nginx adds X-Frame-Options, X-Content-Type-Options in production</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div></div>
+      <span class="code-filename">routes/verify.js — double verification logic</span>
+    </div>
+    <pre>
+<span class="c-comment">// Step 1: Check school access code</span>
+<span class="c-key">const</span> school = <span class="c-key">await</span> prisma.school.<span class="c-fn">findUnique</span>({ <span class="c-key">where</span>: { id: schoolId } })
+<span class="c-key">if</span> (school.accessCode <span class="c-op">!==</span> schoolCode.trim().<span class="c-fn">toUpperCase</span>())
+  <span class="c-key">return</span> res.<span class="c-fn">status</span>(<span class="c-num">403</span>).<span class="c-fn">json</span>({ error: <span class="c-str">'Invalid school code'</span> })
+
+<span class="c-comment">// Step 2: Check student code + use limit</span>
+<span class="c-key">const</span> sc = <span class="c-key">await</span> prisma.studentCode.<span class="c-fn">findFirst</span>({
+  <span class="c-key">where</span>: { schoolId, code: studentCode.<span class="c-fn">toUpperCase</span>(), isActive: <span class="c-key">true</span> }
+})
+<span class="c-key">if</span> (!sc || sc.useCount <span class="c-op">>=</span> sc.maxUses)
+  <span class="c-key">return</span> res.<span class="c-fn">status</span>(<span class="c-num">403</span>).<span class="c-fn">json</span>({ error: <span class="c-str">'Student code limit reached'</span> })
+
+<span class="c-comment">// Step 3: Issue short-lived verification token</span>
+<span class="c-key">const</span> token = jwt.<span class="c-fn">sign</span>(
+  { schoolId, studentCodeId: sc.id },
+  process.env.JWT_SECRET,
+  { expiresIn: <span class="c-str">'4h'</span> }
+)</pre>
+  </div>
+</div>
+
+<!-- ══ DEPLOYMENT ══════════════════════════════ -->
+<div class="page page-alt">
+  <div class="section-label">
+    <div class="pill">06 · Deployment</div>
+    <div class="line"></div>
+  </div>
+
+  <h2>Production <span>Deployment</span></h2>
+  <p class="lead">The entire platform ships as a single Docker Compose stack. One command brings up all services. SSL is handled by Nginx with Let's Encrypt certificates.</p>
+
+  <div class="code-block" style="background:var(--code-bg); border-color:var(--code-border);">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div></div>
+      <span class="code-filename">nginx/nginx.conf — routing rules</span>
+    </div>
+    <pre>
+<span class="c-teal">upstream</span> backend  { server backend:3001; }
+<span class="c-teal">upstream</span> frontend { server frontend:80; }
+
+server {
+  listen <span class="c-num">80</span>;
+  server_name edudiscount.com;
+
+  <span class="c-comment"># All API calls → Node.js backend</span>
+  location /api/ {
+    proxy_pass http://backend;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+
+  <span class="c-comment"># All other requests → React SPA</span>
+  location / {
+    proxy_pass http://frontend;
+    try_files $uri $uri/ /index.html;
+  }
+}
+
+<span class="c-comment"># Production: adds SSL + security headers</span>
+<span class="c-comment"># Strict-Transport-Security, X-Frame-Options,</span>
+<span class="c-comment"># X-Content-Type-Options, gzip compression</span></pre>
+  </div>
+
+  <div class="code-block" style="background:var(--code-bg); border-color:var(--code-border);">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div></div>
+      <span class="code-filename">.env — required environment variables</span>
+    </div>
+    <pre>
+<span class="c-teal">DATABASE_URL</span>=postgresql://user:pass@postgres:5432/edudiscount
+<span class="c-teal">REDIS_URL</span>=redis://redis:6379
+<span class="c-teal">JWT_SECRET</span>=<span class="c-str">strong-random-secret-min-32-chars</span>
+<span class="c-teal">ADMIN_SEED_EMAIL</span>=admin@yourdomain.com
+<span class="c-teal">ADMIN_SEED_PASSWORD</span>=<span class="c-str">StrongPassword@123</span>
+<span class="c-teal">SMTP_HOST</span>=smtp.gmail.com
+<span class="c-teal">SMTP_PORT</span>=587
+<span class="c-teal">SMTP_USER</span>=your@gmail.com
+<span class="c-teal">SMTP_PASS</span>=<span class="c-str">your-app-password</span>
+<span class="c-teal">PARTNER_API_URL</span>=https://partner-platform.com/webhook
+<span class="c-teal">PARTNER_WEBHOOK_SECRET</span>=<span class="c-str">hmac-secret</span>
+<span class="c-teal">FRONTEND_URL</span>=https://edudiscount.com</pre>
+  </div>
+</div>
+
+<!-- ══ ARABIC COVER ════════════════════════════ -->
+<div class="cover" style="page-break-before: always;">
+  <div class="cover-tag" style="font-family:'Tajawal',sans-serif; direction:rtl; text-align:right;">
+    // منصة EduDiscount · المرجع التقني · 2026
+  </div>
+  <h1 style="font-family:'Tajawal',sans-serif; letter-spacing:0; direction:rtl; text-align:right;">
+    التوثيق<br><span>التقني الشامل</span>
+  </h1>
+  <p class="sub" style="font-family:'Tajawal',sans-serif; direction:rtl; text-align:right;">
+    البنية التقنية، قواعد البيانات، واجهات API، نموذج الأمان، ودليل النشر
+  </p>
+
+  <div class="tech-badges">
+    <span class="badge badge-green">Node.js 20</span>
+    <span class="badge badge-teal">Express 4</span>
+    <span class="badge badge-blue">PostgreSQL 15</span>
+    <span class="badge badge-blue">Prisma ORM</span>
+    <span class="badge badge-orange">Redis 7</span>
+    <span class="badge badge-purple">React 18 + Vite</span>
+    <span class="badge badge-teal">Tailwind CSS</span>
+    <span class="badge badge-green">Docker Compose</span>
+    <span class="badge badge-orange">Nginx</span>
+    <span class="badge badge-purple">JWT Auth</span>
+  </div>
+
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="lbl" style="font-family:'Tajawal',sans-serif;">الإصدار</div>
+      <div class="val">1.0.4</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="lbl" style="font-family:'Tajawal',sans-serif;">الخدمات</div>
+      <div class="val">5 حاويات Docker</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="lbl" style="font-family:'Tajawal',sans-serif;">قاعدة البيانات</div>
+      <div class="val">6 نماذج Prisma</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="lbl" style="font-family:'Tajawal',sans-serif;">نقاط API</div>
+      <div class="val">+30 مسار</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ARABIC — ARCHITECTURE ══════════════════ -->
+<div class="ar-page" style="background: var(--code-bg);">
+  <div class="section-label">
+    <div class="pill">01 · البنية التقنية</div>
+    <div class="line" style="background:rgba(255,255,255,0.1);"></div>
+  </div>
+
+  <h2 style="font-family:'Tajawal',sans-serif; color:white;">بنية <span>النظام</span></h2>
+  <p class="lead" style="font-family:'Tajawal',sans-serif; color:rgba(255,255,255,0.5);">
+    بنية تعتمد على الخدمات المصغرة وتعمل داخل Docker Compose. جميع حركة المرور الخارجية تدخل عبر Nginx، الذي يوجه طلبات API إلى الخادم الخلفي Node.js وباقي الطلبات إلى الواجهة الأمامية الثابتة React.
+  </p>
+
+  <div class="arch">
+    <div class="arch-box">
+      <div class="icon">🌐</div>
+      <div class="name">المتصفح</div>
+      <div class="desc" style="font-family:'Tajawal',sans-serif;">تطبيق React<br>المنفذ 80/443</div>
+    </div>
+    <div class="arch-arrow">←</div>
+    <div class="arch-box">
+      <div class="icon">🔀</div>
+      <div class="name">Nginx</div>
+      <div class="desc" style="font-family:'Tajawal',sans-serif;">وكيل عكسي<br>إنهاء SSL</div>
+    </div>
+    <div class="arch-arrow">←</div>
+    <div class="arch-box">
+      <div class="icon">⚙️</div>
+      <div class="name">Express API</div>
+      <div class="desc" style="font-family:'Tajawal',sans-serif;">Node.js 20<br>المنفذ 3001</div>
+    </div>
+    <div class="arch-arrow">←</div>
+    <div class="arch-box">
+      <div class="icon">🗄</div>
+      <div class="name">PostgreSQL</div>
+      <div class="desc" style="font-family:'Tajawal',sans-serif;">Prisma ORM<br>المنفذ 5432</div>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; direction:rtl;">
+    <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:20px; text-align:right;">
+      <div style="font-size:24px; margin-bottom:8px;">🖥</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--teal); margin-bottom:6px;">nginx</div>
+      <div style="font-family:'Tajawal',sans-serif; font-size:12px; color:rgba(255,255,255,0.45); line-height:1.5;">وكيل عكسي، توزيع الطلبات، إنهاء SSL، ضغط gzip، رؤوس الأمان</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:20px; text-align:right;">
+      <div style="font-size:24px; margin-bottom:8px;">⚡</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--teal); margin-bottom:6px;">redis</div>
+      <div style="font-family:'Tajawal',sans-serif; font-size:12px; color:rgba(255,255,255,0.45); line-height:1.5;">تخزين مؤقت لحالة الأكواد، مدة بقاء 48 ساعة، بحث فوري دون قاعدة بيانات</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:20px; text-align:right;">
+      <div style="font-size:24px; margin-bottom:8px;">📦</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--teal); margin-bottom:6px;">uploads_data</div>
+      <div style="font-family:'Tajawal',sans-serif; font-size:12px; color:rgba(255,255,255,0.45); line-height:1.5;">حجم Docker مسمى لتخزين الشعارات المرفوعة، يبقى عند إعادة تشغيل الحاويات</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ARABIC — DATABASE ══════════════════════ -->
+<div class="ar-page page-alt">
+  <div class="section-label">
+    <div class="pill">02 · قاعدة البيانات</div>
+    <div class="line"></div>
+  </div>
+
+  <h2 style="font-family:'Tajawal',sans-serif;">مخطط <span>قاعدة البيانات</span></h2>
+  <p class="lead" style="font-family:'Tajawal',sans-serif;">
+    PostgreSQL مُدار عبر Prisma ORM. 6 نماذج بعلاقات تسلسل حذف تلقائي. تُطبَّق عمليات الترحيل تلقائياً عند بدء تشغيل الحاوية.
+  </p>
+
+  <div class="schema-grid">
+    <div class="schema-box">
+      <div class="model-name">نموذج School — المدرسة</div>
+      <div style="font-family:'Tajawal',sans-serif; font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:12px;">يمثل كل مدرسة مع رمز الوصول الخاص بها</div>
+      <div class="schema-field"><span class="sf-name">accessCode</span><span class="sf-type">String?</span><span class="sf-mod">رمز المدرسة — اختياري</span></div>
+      <div class="schema-field"><span class="sf-name">nameAr</span><span class="sf-type">String?</span><span class="sf-mod">الاسم بالعربية</span></div>
+      <div class="schema-field"><span class="sf-name">isActive</span><span class="sf-type">Boolean</span><span class="sf-mod">تفعيل/تعطيل المدرسة</span></div>
+      <div class="schema-field"><span class="sf-name">studentCodes</span><span class="sf-type">StudentCode[]</span><span class="sf-mod">حذف تسلسلي</span></div>
+    </div>
+    <div class="schema-box">
+      <div class="model-name">نموذج StudentCode — كود الطالب</div>
+      <div style="font-family:'Tajawal',sans-serif; font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:12px;">كود فريد لكل طالب مرتبط بمدرسته</div>
+      <div class="schema-field"><span class="sf-name">code</span><span class="sf-type">String</span><span class="sf-mod">فريد · STU-XXXXXX</span></div>
+      <div class="schema-field"><span class="sf-name">label</span><span class="sf-type">String?</span><span class="sf-mod">اسم/رقم الطالب للإدارة</span></div>
+      <div class="schema-field"><span class="sf-name">maxUses</span><span class="sf-type">Int</span><span class="sf-mod">الحد الأقصى للاستخدامات</span></div>
+      <div class="schema-field"><span class="sf-name">useCount</span><span class="sf-type">Int</span><span class="sf-mod">عدد مرات الاستخدام الفعلي</span></div>
+      <div class="schema-field"><span class="sf-name">isActive</span><span class="sf-type">Boolean</span><span class="sf-mod">تفعيل/إيقاف الكود</span></div>
+    </div>
+    <div class="schema-box">
+      <div class="model-name">نموذج Teacher — المدرس</div>
+      <div style="font-family:'Tajawal',sans-serif; font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:12px;">بيانات المدرس مع تفاصيل التسعير</div>
+      <div class="schema-field"><span class="sf-name">coursePrice</span><span class="sf-type">Int</span><span class="sf-mod">بالقروش (÷100 = جنيه)</span></div>
+      <div class="schema-field"><span class="sf-name">discountPct</span><span class="sf-type">Int</span><span class="sf-mod">نسبة الخصم %</span></div>
+      <div class="schema-field"><span class="sf-name">nameAr</span><span class="sf-type">String?</span><span class="sf-mod">الاسم بالعربية</span></div>
+      <div class="schema-field"><span class="sf-name">platformTeacherId</span><span class="sf-type">String</span><span class="sf-mod">المعرف في المنصة الخارجية</span></div>
+    </div>
+    <div class="schema-box">
+      <div class="model-name">نموذج DiscountCode — كود الخصم</div>
+      <div style="font-family:'Tajawal',sans-serif; font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:12px;">سجل كامل لكل كود خصم صدر</div>
+      <div class="schema-field"><span class="sf-name">code</span><span class="sf-type">String</span><span class="sf-mod">فريد · EDU-XXX-YYYY-ZZZ</span></div>
+      <div class="schema-field"><span class="sf-name">originalPrice</span><span class="sf-type">Int</span><span class="sf-mod">لقطة وقت الإصدار</span></div>
+      <div class="schema-field"><span class="sf-name">finalPrice</span><span class="sf-type">Int</span><span class="sf-mod">السعر بعد الخصم</span></div>
+      <div class="schema-field"><span class="sf-name">status</span><span class="sf-type">String</span><span class="sf-mod">ACTIVE | USED | EXPIRED</span></div>
+      <div class="schema-field"><span class="sf-name">expiresAt</span><span class="sf-type">DateTime</span><span class="sf-mod">الآن + 48 ساعة</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ARABIC — SECURITY & FLOW ══════════════════ -->
+<div class="ar-page">
+  <div class="section-label">
+    <div class="pill">03 · الأمان والتوثيق</div>
+    <div class="line"></div>
+  </div>
+
+  <h2 style="font-family:'Tajawal',sans-serif;">نموذج <span>الأمان المزدوج</span></h2>
+  <p class="lead" style="font-family:'Tajawal',sans-serif;">
+    طبقات متعددة من الحماية تشمل المصادقة، التحكم في الوصول، منع إساءة الاستخدام، وحماية البيانات.
+  </p>
+
+  <div class="security-grid">
+    <div class="security-card">
+      <h4 style="font-family:'Tajawal',sans-serif;">🔐 نظام التوثيق المزدوج</h4>
+      <ul style="font-family:'Tajawal',sans-serif; direction:rtl;">
+        <li style="padding-right:16px; padding-left:0;">رمز المدرسة: كود عشوائي يولده المسؤول، يُوزَّع على الطلاب عبر القنوات الرسمية</li>
+        <li style="padding-right:16px; padding-left:0;">رمز الطالب: كود شخصي فريد لكل طالب بحد أقصى قابل للتعديل</li>
+        <li style="padding-right:16px; padding-left:0;">كلا الرمزين مطلوبان لإصدار أي كود خصم</li>
+        <li style="padding-right:16px; padding-left:0;">عند نجاح التحقق: يُصدر رمز JWT صالح 4 ساعات</li>
+        <li style="padding-right:16px; padding-left:0;">المدارس بدون رمز وصول: تسمح بوصول مفتوح (متوافق مع الإصدارات السابقة)</li>
+      </ul>
+    </div>
+    <div class="security-card">
+      <h4 style="font-family:'Tajawal',sans-serif;">🛡 الحماية من الاحتيال</h4>
+      <ul style="font-family:'Tajawal',sans-serif; direction:rtl;">
+        <li style="padding-right:16px; padding-left:0;">تحديد معدل الطلبات على مستوى IP عبر express-rate-limit</li>
+        <li style="padding-right:16px; padding-left:0;">الحد الأقصى: 3 أكواد لكل (بريد إلكتروني + مدرس) كل 24 ساعة</li>
+        <li style="padding-right:16px; padding-left:0;">فحص useCount ذري قبل كل إصدار للكود</li>
+        <li style="padding-right:16px; padding-left:0;">جميع الأكواد تنتهي تلقائياً بعد 48 ساعة</li>
+        <li style="padding-right:16px; padding-left:0;">قيد التفرد على سلاسل الكود يمنع التكرار</li>
+      </ul>
+    </div>
+    <div class="security-card">
+      <h4 style="font-family:'Tajawal',sans-serif;">🔑 المصادقة</h4>
+      <ul style="font-family:'Tajawal',sans-serif; direction:rtl;">
+        <li style="padding-right:16px; padding-left:0;">مسؤول النظام: JWT موقع بـ HS256، يُرسَل كـ Bearer token</li>
+        <li style="padding-right:16px; padding-left:0;">Webhook الخارجي: توقيع HMAC-SHA256 على جميع الطلبات الصادرة</li>
+        <li style="padding-right:16px; padding-left:0;">كلمات المرور مشفرة بـ bcrypt (معامل التكلفة 10)</li>
+        <li style="padding-right:16px; padding-left:0;">جميع مسارات /admin/* تتطلب requireAuth()</li>
+      </ul>
+    </div>
+    <div class="security-card">
+      <h4 style="font-family:'Tajawal',sans-serif;">🔒 حماية البيانات</h4>
+      <ul style="font-family:'Tajawal',sans-serif; direction:rtl;">
+        <li style="padding-right:16px; padding-left:0;">جميع الأسرار في متغيرات البيئة، لا في الكود</li>
+        <li style="padding-right:16px; padding-left:0;">قاعدة البيانات وRedis غير مكشوفتين خارج شبكة Docker</li>
+        <li style="padding-right:16px; padding-left:0;">رفع الملفات مقيد: حجم 5MB، صور فقط</li>
+        <li style="padding-right:16px; padding-left:0;">Nginx يضيف رؤوس الأمان في بيئة الإنتاج</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ARABIC — API REFERENCE ════════════════ -->
+<div class="ar-page page-alt">
+  <div class="section-label">
+    <div class="pill">04 · واجهة API</div>
+    <div class="line"></div>
+  </div>
+
+  <h2 style="font-family:'Tajawal',sans-serif;">مرجع <span>نقاط API</span></h2>
+  <p class="lead" style="font-family:'Tajawal',sans-serif;">
+    جميع النقاط مسبوقة بـ <code style="font-family:monospace;background:#f1f5f9;padding:2px 8px;border-radius:4px">/api</code>. مسارات المسؤول تتطلب رمز JWT. المسارات العامة مفتوحة.
+  </p>
+
+  <table style="direction:rtl;">
+    <thead>
+      <tr>
+        <th>الوصف</th>
+        <th>التوثيق</th>
+        <th>المسار</th>
+        <th>الطريقة</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>قائمة المدارس النشطة مع علامة hasAccessCode</td><td>—</td><td style="direction:ltr; text-align:left;">/schools</td><td><span class="method get">GET</span></td></tr>
+      <tr><td>قائمة المواد لمدرسة معينة</td><td>—</td><td style="direction:ltr; text-align:left;">/subjects?schoolId=</td><td><span class="method get">GET</span></td></tr>
+      <tr><td>قائمة المدرسين مع التسعير</td><td>—</td><td style="direction:ltr; text-align:left;">/teachers?subjectId=</td><td><span class="method get">GET</span></td></tr>
+      <tr><td>التحقق المزدوج → إصدار JWT لمدة 4 ساعات</td><td>—</td><td style="direction:ltr; text-align:left;">/verify</td><td><span class="method post">POST</span></td></tr>
+      <tr><td>إصدار كود خصم + زيادة عداد استخدام كود الطالب</td><td>verify JWT</td><td style="direction:ltr; text-align:left;">/codes/generate</td><td><span class="method post">POST</span></td></tr>
+      <tr><td>استرجاع تفاصيل الكود مع بيانات المدرس والسعر</td><td>—</td><td style="direction:ltr; text-align:left;">/codes/:codeId</td><td><span class="method get">GET</span></td></tr>
+      <tr><td>إعادة إرسال الكود النشط إلى البريد الإلكتروني</td><td>—</td><td style="direction:ltr; text-align:left;">/codes/resend</td><td><span class="method post">POST</span></td></tr>
+      <tr><td>تسجيل الدخول للمسؤول → إصدار JWT</td><td>—</td><td style="direction:ltr; text-align:left;">/admin/auth/login</td><td><span class="method post">POST</span></td></tr>
+      <tr><td>إنشاء/تجديد رمز وصول المدرسة</td><td>admin</td><td style="direction:ltr; text-align:left;">/admin/access-codes/schools/:id/generate</td><td><span class="method post">POST</span></td></tr>
+      <tr><td>إنشاء أكواد طلاب بالجملة (حتى 500)</td><td>admin</td><td style="direction:ltr; text-align:left;">/admin/access-codes/students/generate</td><td><span class="method post">POST</span></td></tr>
+      <tr><td>تحديث الحد الأقصى للاستخدامات أو تعطيل الكود</td><td>admin</td><td style="direction:ltr; text-align:left;">/admin/access-codes/students/:id</td><td><span class="method put">PUT</span></td></tr>
+      <tr><td>تصدير أكواد الطلاب كملف CSV</td><td>admin</td><td style="direction:ltr; text-align:left;">/admin/access-codes/students/export</td><td><span class="method get">GET</span></td></tr>
+      <tr><td>إحصائيات: الأكواد شهرياً، معدلات الاسترداد، إجمالي الخصومات</td><td>admin</td><td style="direction:ltr; text-align:left;">/admin/reports</td><td><span class="method get">GET</span></td></tr>
+      <tr><td>حفظ إعدادات المنصة في قاعدة البيانات</td><td>admin</td><td style="direction:ltr; text-align:left;">/admin/settings</td><td><span class="method put">PUT</span></td></tr>
+      <tr><td>رفع الشعار (حجم 5MB، صور فقط)</td><td>admin</td><td style="direction:ltr; text-align:left;">/admin/upload</td><td><span class="method post">POST</span></td></tr>
+      <tr><td>Webhook وارد من المنصة الشريكة (HMAC-SHA256)</td><td>HMAC</td><td style="direction:ltr; text-align:left;">/webhooks/partner-redemption</td><td><span class="method post">POST</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
