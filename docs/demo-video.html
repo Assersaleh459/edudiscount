@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EduDiscount — Platform Demo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --navy: #1B2A4A;
+  --teal: #00B8A9;
+  --teal2: #00d4c4;
+  --gold: #F5A623;
+  --bg: #0a1628;
+}
+
+html, body {
+  width: 1920px; height: 1080px;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: 'Outfit', sans-serif;
+}
+
+/* ── STAGE ── */
+#stage {
+  width: 1920px; height: 1080px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── SCENE BASE ── */
+.scene {
+  position: absolute; inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.7s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.scene.active { opacity: 1; pointer-events: all; }
+
+/* ── PROGRESS BAR ── */
+#progress-wrap {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 5px; background: rgba(255,255,255,0.08);
+  z-index: 1000;
+}
+#progress-bar {
+  height: 100%; background: var(--teal);
+  width: 0%; transition: width 0.3s linear;
+}
+
+/* ── CONTROLS ── */
+#controls {
+  position: fixed; bottom: 18px; right: 28px;
+  display: flex; gap: 12px; align-items: center;
+  z-index: 1000;
+}
+#controls button {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white; cursor: pointer;
+  border-radius: 8px; padding: 8px 16px;
+  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600;
+  transition: background 0.2s;
+}
+#controls button:hover { background: rgba(255,255,255,0.2); }
+#scene-counter {
+  font-size: 12px; color: rgba(255,255,255,0.35);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ════════════════════════════════════════
+   SCENE 1 — BRAND REVEAL
+════════════════════════════════════════ */
+#s1 { background: radial-gradient(ellipse at 50% 40%, #0f2040 0%, #050d1a 100%); }
+
+.s1-glow {
+  position: absolute;
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,184,169,0.18) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  animation: pulse 3s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{transform:translate(-50%,-50%) scale(1);} 50%{transform:translate(-50%,-50%) scale(1.1);} }
+
+.s1-content {
+  text-align: center; position: relative; z-index: 1;
+}
+.s1-badge {
+  display: inline-block;
+  background: rgba(0,184,169,0.15); border: 1px solid rgba(0,184,169,0.35);
+  color: var(--teal); font-size: 13px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  padding: 8px 24px; border-radius: 100px; margin-bottom: 40px;
+  animation: fadeUp 0.8s 0.2s both;
+}
+.s1-logo {
+  font-size: 100px; margin-bottom: 28px;
+  animation: fadeUp 0.8s 0.4s both;
+  filter: drop-shadow(0 0 40px rgba(0,184,169,0.5));
+}
+.s1-title {
+  font-size: 96px; font-weight: 900; color: white;
+  letter-spacing: -4px; line-height: 1;
+  margin-bottom: 20px;
+  animation: fadeUp 0.8s 0.6s both;
+}
+.s1-title span { color: var(--teal); }
+.s1-sub {
+  font-size: 26px; color: rgba(255,255,255,0.5); font-weight: 300;
+  animation: fadeUp 0.8s 0.8s both;
+  margin-bottom: 56px;
+}
+.s1-stats {
+  display: flex; gap: 60px; justify-content: center;
+  animation: fadeUp 0.8s 1s both;
+}
+.s1-stat .num { font-size: 44px; font-weight: 800; color: var(--teal); }
+.s1-stat .lbl { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(30px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* ════════════════════════════════════════
+   SCENE 2 — PROBLEM
+════════════════════════════════════════ */
+#s2 { background: #060f1e; }
+
+.s2-left {
+  width: 500px; margin-right: 80px;
+}
+.s2-tag {
+  font-size: 12px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 20px;
+}
+.s2-h {
+  font-size: 58px; font-weight: 800; color: white;
+  line-height: 1.1; letter-spacing: -2px;
+}
+.s2-h span { color: var(--teal); }
+.s2-p {
+  font-size: 18px; color: rgba(255,255,255,0.45); margin-top: 20px; line-height: 1.7;
+}
+
+.s2-cards { display: flex; flex-direction: column; gap: 20px; }
+
+.prob-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 3px solid var(--teal);
+  border-radius: 16px; padding: 28px 32px;
+  width: 680px;
+  display: flex; align-items: flex-start; gap: 20px;
+  opacity: 0; transform: translateX(40px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.prob-card.show { opacity: 1; transform: translateX(0); }
+.prob-icon { font-size: 36px; flex-shrink: 0; margin-top: 2px; }
+.prob-card h3 { font-size: 18px; font-weight: 700; color: white; margin-bottom: 8px; }
+.prob-card p { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+/* ════════════════════════════════════════
+   SCENE 3 — WELCOME PAGE
+════════════════════════════════════════ */
+#s3 { background: #060f1e; gap: 80px; align-items: center; }
+
+.annotation {
+  width: 340px; flex-shrink: 0;
+}
+.anno-num {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--teal); color: white;
+  font-size: 20px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.anno-title { font-size: 32px; font-weight: 800; color: white; margin-bottom: 12px; line-height: 1.2; }
+.anno-title span { color: var(--teal); }
+.anno-desc { font-size: 16px; color: rgba(255,255,255,0.5); line-height: 1.7; }
+.anno-bullets { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+.anno-bullet {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; color: rgba(255,255,255,0.6);
+}
+.anno-bullet::before { content:'✓'; color: var(--teal); font-weight: 700; font-size: 16px; }
+
+/* Phone mockup */
+.phone {
+  width: 340px; height: 680px;
+  background: #111;
+  border-radius: 44px;
+  border: 8px solid #222;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+  position: relative;
+  flex-shrink: 0;
+}
+.phone-notch {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  width: 100px; height: 28px; background: #111; border-radius: 14px; z-index: 10;
+}
+
+/* Welcome screen inside phone */
+.welcome-screen {
+  width: 100%; height: 100%;
+  background: var(--navy);
+  display: flex; flex-direction: column;
+}
+.ws-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 48px 20px 16px;
+  font-size: 13px; font-weight: 700; color: white;
+}
+.ws-lang { font-size: 11px; color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 20px; }
+.ws-body {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 20px; text-align: center;
+}
+.ws-icon { font-size: 64px; margin-bottom: 20px; }
+.ws-title { font-size: 22px; font-weight: 800; color: white; margin-bottom: 8px; }
+.ws-sub { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.5; margin-bottom: 32px; max-width: 220px; }
+.ws-btn {
+  background: white; color: var(--navy);
+  padding: 14px 32px; border-radius: 16px;
+  font-size: 14px; font-weight: 800;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+/* Browser mockup */
+.browser {
+  background: #1a1a2e;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+.browser-bar {
+  background: #252535;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.browser-dots { display: flex; gap: 6px; }
+.browser-dot { width: 12px; height: 12px; border-radius: 50%; }
+.bd-r { background: #ff5f56; } .bd-y { background: #ffbd2e; } .bd-g { background: #27c93f; }
+.browser-url {
+  flex: 1; background: rgba(255,255,255,0.07);
+  border-radius: 6px; padding: 5px 12px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ════════════════════════════════════════
+   SCENE 4 — VERIFICATION
+════════════════════════════════════════ */
+#s4 { background: #060f1e; gap: 80px; }
+
+.selector-screen {
+  width: 480px;
+}
+.ss-header {
+  background: var(--navy); padding: 16px 20px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 700; color: white;
+}
+
+.ss-body { background: white; padding: 20px; }
+
+.ss-label { font-size: 11px; font-weight: 600; color: #666; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.ss-select {
+  width: 100%; padding: 10px 14px;
+  border: 2px solid #e2e8f0; border-radius: 10px;
+  font-size: 13px; color: #1e293b; margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ss-select.filled { border-color: var(--teal); background: #f0fefe; }
+
+.verify-panel {
+  background: #fffbeb;
+  border: 2px solid #f59e0b;
+  border-radius: 12px; padding: 16px;
+  margin-bottom: 16px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.5s 0.3s, transform 0.5s 0.3s;
+}
+.verify-panel.show { opacity: 1; transform: translateY(0); }
+.verify-title { font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.verify-field { margin-bottom: 10px; }
+.verify-field label { font-size: 10px; font-weight: 600; color: #78716c; display: block; margin-bottom: 4px; }
+.verify-input {
+  width: 100%; padding: 8px 12px;
+  border: 1.5px solid #d6d3d1; border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  background: white; color: #1c1917;
+  letter-spacing: 2px;
+}
+.verify-input.filled { border-color: var(--teal); background: #f0fefe; }
+.verify-btn {
+  width: 100%; padding: 9px;
+  background: var(--navy); color: white;
+  border: none; border-radius: 8px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  margin-top: 4px;
+}
+.verified-badge {
+  background: #dcfce7; border: 1.5px solid #16a34a;
+  border-radius: 10px; padding: 10px 14px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700; color: #15803d;
+  margin-bottom: 16px;
+  opacity: 0; transition: opacity 0.5s;
+}
+.verified-badge.show { opacity: 1; }
+
+/* ════════════════════════════════════════
+   SCENE 5 — TEACHER + PRICE PREVIEW
+════════════════════════════════════════ */
+#s5 { background: #060f1e; gap: 80px; }
+
+.teacher-card {
+  background: white; border-radius: 14px; padding: 14px;
+  display: flex; align-items: center; gap: 12px;
+  border: 2px solid var(--teal); margin-bottom: 14px;
+  animation: none;
+}
+.teacher-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--navy); display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 18px; font-weight: 700; flex-shrink: 0;
+}
+.teacher-info h4 { font-size: 13px; font-weight: 700; color: var(--navy); }
+.teacher-info p { font-size: 11px; color: #64748b; }
+
+.price-preview {
+  background: linear-gradient(135deg, var(--navy) 0%, #0f1e38 100%);
+  border-radius: 14px; padding: 18px;
+  margin-bottom: 14px;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.5s 0.5s, transform 0.5s 0.5s;
+}
+.price-preview.show { opacity: 1; transform: translateY(0); }
+.pp-row { display: flex; justify-content: space-between; align-items: center; }
+.pp-label { font-size: 11px; color: rgba(255,255,255,0.5); }
+.pp-val { font-size: 13px; color: white; font-weight: 600; }
+.pp-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 10px 0; }
+.pp-save { font-size: 16px; font-weight: 800; color: var(--teal); }
+
+/* ════════════════════════════════════════
+   SCENE 6 — CODE DELIVERY
+════════════════════════════════════════ */
+#s6 { background: #060f1e; gap: 80px; }
+
+.code-card {
+  width: 380px;
+  background: var(--navy);
+  border-radius: 24px; padding: 28px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.6s, transform 0.6s;
+}
+.code-card.show { opacity:1; transform: translateY(0); }
+.code-school { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.code-teacher { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
+.code-badge-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
+.code-badge {
+  width: 110px; height: 110px; border-radius: 50%;
+  background: var(--teal);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  box-shadow: 0 0 40px rgba(0,184,169,0.4);
+}
+.code-badge .pct { font-size: 36px; font-weight: 900; color: white; line-height: 1; }
+.code-badge .off { font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 600; }
+.code-prices {
+  display: flex; justify-content: space-between;
+  background: rgba(255,255,255,0.06); border-radius: 12px;
+  padding: 12px 16px; margin-bottom: 16px;
+}
+.cp-item { text-align: center; }
+.cp-lbl { font-size: 10px; color: rgba(255,255,255,0.35); margin-bottom: 4px; }
+.cp-val { font-size: 15px; font-weight: 700; color: white; }
+.cp-val.strike { text-decoration: line-through; color: rgba(255,255,255,0.35); font-size: 13px; }
+.cp-val.teal { color: var(--teal); font-size: 18px; }
+.code-box {
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 14px 18px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.code-text { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: white; letter-spacing: 3px; }
+.copy-btn { font-size: 11px; color: var(--teal); font-weight: 700; }
+.code-expiry { font-size: 11px; color: rgba(255,255,255,0.3); text-align: center; margin-bottom: 14px; }
+.use-btn {
+  width: 100%; padding: 13px;
+  background: var(--teal); border: none; border-radius: 12px;
+  color: white; font-size: 14px; font-weight: 700;
+  cursor: pointer;
+}
+
+/* ════════════════════════════════════════
+   SCENE 7 — ADMIN DASHBOARD
+════════════════════════════════════════ */
+#s7 { background: #060f1e; gap: 60px; }
+
+.admin-shell {
+  width: 860px; height: 560px;
+  background: #f8fafc;
+  border-radius: 16px; overflow: hidden;
+  display: flex;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+.admin-sidebar {
+  width: 180px; background: var(--navy);
+  display: flex; flex-direction: column; flex-shrink: 0;
+}
+.admin-sidebar-logo {
+  padding: 20px 16px 16px;
+  font-size: 14px; font-weight: 800; color: white;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; gap: 8px;
+}
+.admin-nav-item {
+  padding: 11px 16px; font-size: 12px; font-weight: 500;
+  color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 8px;
+  cursor: pointer;
+}
+.admin-nav-item.active { background: var(--teal); color: white; font-weight: 700; }
+.admin-content { flex: 1; padding: 24px; overflow: hidden; }
+.admin-page-title { font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 16px; }
+
+.admin-stats-row { display: flex; gap: 14px; margin-bottom: 18px; }
+.admin-stat-card {
+  flex: 1; background: white; border-radius: 12px; padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.admin-stat-card .val { font-size: 28px; font-weight: 800; color: var(--navy); }
+.admin-stat-card .lbl { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+.admin-stat-card .teal { color: var(--teal); }
+
+.admin-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.admin-table th { text-align: left; padding: 8px 12px; color: #94a3b8; font-weight: 600; border-bottom: 2px solid #f1f5f9; font-size: 11px; }
+.admin-table td { padding: 10px 12px; border-bottom: 1px solid #f8fafc; color: #334155; }
+.admin-table tr:hover td { background: #f8fafc; }
+.status-active { background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+.status-inactive { background: #f1f5f9; color: #94a3b8; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+
+/* ════════════════════════════════════════
+   SCENE 8 — ACCESS CODES
+════════════════════════════════════════ */
+#s8 { background: #060f1e; gap: 60px; }
+
+.codes-panel {
+  width: 680px; background: white; border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+.codes-header { background: var(--navy); padding: 16px 24px; color: white; font-size: 16px; font-weight: 700; }
+.codes-body { padding: 20px 24px; }
+.codes-school-badge {
+  background: var(--teal); color: white;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 18px; border-radius: 10px;
+  font-size: 13px; font-weight: 700; margin-bottom: 16px;
+}
+.codes-school-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px; font-weight: 700;
+  background: #f1f5f9; padding: 10px 16px;
+  border-radius: 10px; letter-spacing: 3px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; color: var(--navy);
+}
+.gen-form {
+  background: #f8fafc; border-radius: 12px; padding: 16px;
+  margin-bottom: 16px;
+}
+.gen-form label { font-size: 11px; font-weight: 600; color: #64748b; display: block; margin-bottom: 6px; }
+.gen-row { display: flex; gap: 10px; align-items: flex-end; }
+.gen-input {
+  flex: 1; padding: 9px 12px; border: 1.5px solid #e2e8f0; border-radius: 8px;
+  font-size: 14px; font-weight: 700; color: var(--navy); text-align: center;
+}
+.gen-btn {
+  padding: 9px 20px; background: var(--navy); color: white;
+  border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
+  white-space: nowrap;
+}
+
+.codes-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.codes-table th { text-align: left; padding: 6px 10px; color: #94a3b8; font-weight: 600; border-bottom: 2px solid #f1f5f9; }
+.codes-table td { padding: 7px 10px; border-bottom: 1px solid #f8fafc; color: #334155; font-family: 'JetBrains Mono', monospace; }
+.codes-table td:last-child { font-family: 'Outfit', sans-serif; }
+
+.code-count-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #dcfce7; color: #15803d;
+  padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;
+  margin-bottom: 12px; opacity: 0; transition: opacity 0.4s;
+}
+.code-count-badge.show { opacity: 1; }
+
+/* ════════════════════════════════════════
+   SCENE 9 — SETTINGS / THEMING
+════════════════════════════════════════ */
+#s9 { background: #060f1e; gap: 60px; }
+
+.settings-panel {
+  width: 640px; background: white; border-radius: 16px;
+  overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+.settings-header { background: var(--navy); padding: 16px 24px; color: white; font-size: 16px; font-weight: 700; }
+.settings-body { padding: 20px 24px; }
+.settings-section { margin-bottom: 20px; }
+.settings-section-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9; }
+
+.logo-row { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+.logo-preview {
+  width: 64px; height: 64px; border-radius: 12px;
+  background: var(--navy); display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+}
+.logo-upload-btn {
+  padding: 9px 18px; background: var(--navy); color: white;
+  border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
+}
+
+.color-row { display: flex; gap: 16px; margin-bottom: 14px; }
+.color-swatch { text-align: center; }
+.swatch {
+  width: 52px; height: 52px; border-radius: 12px;
+  border: 2px solid rgba(0,0,0,0.1);
+  margin: 0 auto 6px;
+}
+.swatch-label { font-size: 10px; color: #94a3b8; }
+
+.settings-preview {
+  border-radius: 10px; padding: 14px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.sp-left { display: flex; align-items: center; gap: 10px; }
+.sp-badge { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 800; }
+.sp-title { font-size: 14px; font-weight: 700; color: white; }
+
+/* ════════════════════════════════════════
+   SCENE 10 — REPORTS
+════════════════════════════════════════ */
+#s10 { background: #060f1e; gap: 60px; }
+
+.reports-panel {
+  width: 860px; background: white; border-radius: 16px;
+  overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  padding: 28px;
+}
+.reports-title { font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 20px; }
+.reports-stats { display: flex; gap: 16px; margin-bottom: 24px; }
+.rstat {
+  flex: 1; background: var(--navy); border-radius: 12px; padding: 18px;
+  text-align: center;
+}
+.rstat .val { font-size: 32px; font-weight: 800; color: var(--teal); }
+.rstat .lbl { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+.chart { display: flex; align-items: flex-end; gap: 12px; height: 140px; margin-bottom: 8px; }
+.bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.bar {
+  width: 100%; background: var(--teal); border-radius: 6px 6px 0 0;
+  transition: height 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.bar-label { font-size: 10px; color: #94a3b8; }
+
+.teacher-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.teacher-table th { text-align: left; padding: 7px 12px; color: #94a3b8; font-size: 11px; border-bottom: 2px solid #f1f5f9; }
+.teacher-table td { padding: 9px 12px; border-bottom: 1px solid #f8fafc; }
+.rate-bar { height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.rate-fill { height: 100%; background: var(--teal); border-radius: 3px; transition: width 1.5s ease; }
+
+/* ════════════════════════════════════════
+   SCENE 11 — CLOSING
+════════════════════════════════════════ */
+#s11 {
+  background: radial-gradient(ellipse at 50% 40%, #0f2040 0%, #050d1a 100%);
+}
+
+.s11-glow {
+  position: absolute;
+  width: 800px; height: 800px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,184,169,0.12) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+}
+
+.s11-content { text-align: center; position: relative; z-index: 1; }
+.s11-ready {
+  font-size: 14px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--teal); margin-bottom: 24px;
+  animation: fadeUp 0.7s 0.2s both;
+}
+.s11-h {
+  font-size: 76px; font-weight: 900; color: white;
+  letter-spacing: -3px; line-height: 1.05; margin-bottom: 20px;
+  animation: fadeUp 0.7s 0.4s both;
+}
+.s11-h span { color: var(--teal); }
+.s11-sub {
+  font-size: 22px; color: rgba(255,255,255,0.45); font-weight: 300;
+  margin-bottom: 60px; animation: fadeUp 0.7s 0.6s both;
+}
+
+.s11-pills {
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 64px; animation: fadeUp 0.7s 0.8s both;
+}
+.s11-pill {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 100px; padding: 10px 24px;
+  font-size: 15px; font-weight: 600; color: white;
+  display: flex; align-items: center; gap: 8px;
+}
+.s11-pill span { color: var(--teal); font-weight: 800; }
+
+.s11-cta {
+  display: inline-block;
+  background: var(--teal); color: white;
+  padding: 18px 52px; border-radius: 16px;
+  font-size: 18px; font-weight: 800;
+  box-shadow: 0 12px 40px rgba(0,184,169,0.35);
+  animation: fadeUp 0.7s 1s both;
+}
+
+.s11-logo {
+  position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
+  font-size: 15px; color: rgba(255,255,255,0.25);
+  display: flex; align-items: center; gap: 10px;
+}
+.s11-logo strong { color: rgba(255,255,255,0.5); }
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- ══ SCENE 1: BRAND REVEAL ══════════════════ -->
+<div class="scene active" id="s1">
+  <div class="s1-glow"></div>
+  <div class="s1-content">
+    <div class="s1-badge">Student Discount Platform · 2026</div>
+    <div class="s1-logo">🎓</div>
+    <div class="s1-title">Edu<span>Discount</span></div>
+    <div class="s1-sub">Get your student discount in seconds — verified, unique, instant.</div>
+    <div class="s1-stats">
+      <div class="s1-stat"><div class="num">25M+</div><div class="lbl">Students in Egypt</div></div>
+      <div style="width:1px;background:rgba(255,255,255,0.12);align-self:stretch"></div>
+      <div class="s1-stat"><div class="num">&lt;60s</div><div class="lbl">Code Delivery</div></div>
+      <div style="width:1px;background:rgba(255,255,255,0.12);align-self:stretch"></div>
+      <div class="s1-stat"><div class="num">100%</div><div class="lbl">Fraud-Proof</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 2: PROBLEM ══════════════════════ -->
+<div class="scene" id="s2">
+  <div class="s2-left">
+    <div class="s2-tag">The Problem</div>
+    <div class="s2-h">Student discounts are<br><span>broken.</span></div>
+    <div class="s2-p">Manual, unverified, and easily abused — teachers lose money, students lose trust.</div>
+  </div>
+  <div class="s2-cards">
+    <div class="prob-card" id="pc1">
+      <div class="prob-icon">😤</div>
+      <div><h3>No Verification</h3><p>Anyone can claim to be a student and get discounts — teachers have no way to validate.</p></div>
+    </div>
+    <div class="prob-card" id="pc2">
+      <div class="prob-icon">📋</div>
+      <div><h3>Manual & Messy</h3><p>Codes shared on WhatsApp, reused, leaked, and never tracked. Zero data for teachers.</p></div>
+    </div>
+    <div class="prob-card" id="pc3">
+      <div class="prob-icon">💸</div>
+      <div><h3>Revenue Leakage</h3><p>Teachers discount 25% but non-students use the codes. Thousands of EGP lost per month.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 3: WELCOME PAGE ════════════════ -->
+<div class="scene" id="s3">
+  <div class="annotation">
+    <div class="anno-num">1</div>
+    <div class="anno-title">Beautiful<br><span>Welcome Page</span></div>
+    <div class="anno-desc">Students land on a clean, branded welcome screen — fully bilingual Arabic & English.</div>
+    <div class="anno-bullets">
+      <div class="anno-bullet">Arabic RTL + English LTR</div>
+      <div class="anno-bullet">Custom logo & colors</div>
+      <div class="anno-bullet">Works on any device</div>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="welcome-screen">
+      <div class="ws-header">
+        <span>🎓 EduDiscount</span>
+        <span class="ws-lang">EN | عر</span>
+      </div>
+      <div class="ws-body">
+        <div class="ws-icon">🎓</div>
+        <div class="ws-title">EduDiscount</div>
+        <div class="ws-sub">Get your student discount in seconds. Verified & instant.</div>
+        <div class="ws-btn">Get Started →</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phone" style="transform: scale(0.82) translateY(30px); margin-left: -40px; opacity: 0.5;">
+    <div class="phone-notch"></div>
+    <div class="welcome-screen" style="background:#0f2040;">
+      <div class="ws-header" style="flex-direction:row-reverse;">
+        <span style="font-family:'Tajawal',sans-serif;">EduDiscount 🎓</span>
+        <span class="ws-lang">EN | عر</span>
+      </div>
+      <div class="ws-body">
+        <div class="ws-icon">🎓</div>
+        <div class="ws-title" style="font-family:'Tajawal',sans-serif;">إيدو ديسكاونت</div>
+        <div class="ws-sub" style="font-family:'Tajawal',sans-serif;direction:rtl;">احصل على خصمك الطلابي في ثوانٍ</div>
+        <div class="ws-btn" style="font-family:'Tajawal',sans-serif;">ابدأ الآن →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 4: VERIFICATION ════════════════ -->
+<div class="scene" id="s4">
+  <div class="annotation">
+    <div class="anno-num">2</div>
+    <div class="anno-title"><span>Double</span><br>Verification</div>
+    <div class="anno-desc">Before any discount is issued, the student must prove they belong to the school — with two separate codes.</div>
+    <div class="anno-bullets">
+      <div class="anno-bullet">School access code</div>
+      <div class="anno-bullet">Personal student code</div>
+      <div class="anno-bullet">4-hour session token</div>
+      <div class="anno-bullet">Configurable use limits</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="browser" style="width:480px;">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot bd-r"></div><div class="browser-dot bd-y"></div><div class="browser-dot bd-g"></div></div>
+        <div class="browser-url">localhost/select</div>
+      </div>
+      <div class="selector-screen">
+        <div class="ss-header">🎓 EduDiscount</div>
+        <div class="ss-body">
+          <div class="ss-label">Select School</div>
+          <div class="ss-select filled">🏫 Cairo International School <span>▾</span></div>
+
+          <div class="verify-panel" id="vp">
+            <div class="verify-title">🔐 Verify Your Access</div>
+            <div class="verify-field">
+              <label>SCHOOL CODE</label>
+              <input class="verify-input filled" value="SCH-X7K2" readonly>
+            </div>
+            <div class="verify-field">
+              <label>YOUR STUDENT CODE</label>
+              <input class="verify-input" id="scode-input" value="" readonly>
+            </div>
+            <button class="verify-btn">Verify Access</button>
+          </div>
+
+          <div class="verified-badge" id="vbadge">✅ Access Verified — Select your subject</div>
+
+          <div class="ss-label">Select Subject</div>
+          <div class="ss-select" id="subj-sel" style="color:#94a3b8;">Choose subject... <span>▾</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 5: TEACHER + PRICE ════════════ -->
+<div class="scene" id="s5">
+  <div class="annotation">
+    <div class="anno-num">3</div>
+    <div class="anno-title">Live<br><span>Price Preview</span></div>
+    <div class="anno-desc">The moment a teacher is selected, the student sees exactly what they'll pay — before committing.</div>
+    <div class="anno-bullets">
+      <div class="anno-bullet">Original price shown</div>
+      <div class="anno-bullet">Discount % highlighted</div>
+      <div class="anno-bullet">Final price in EGP</div>
+      <div class="anno-bullet">Savings calculated live</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="browser" style="width:440px;">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot bd-r"></div><div class="browser-dot bd-y"></div><div class="browser-dot bd-g"></div></div>
+        <div class="browser-url">localhost/select</div>
+      </div>
+      <div class="ss-body" style="background:white;padding:20px;">
+        <div class="ss-label">School</div>
+        <div class="ss-select filled" style="margin-bottom:12px;">🏫 Cairo International School</div>
+        <div class="ss-label">Subject</div>
+        <div class="ss-select filled" style="margin-bottom:12px;">📐 Mathematics</div>
+        <div class="ss-label">Teacher</div>
+
+        <div class="teacher-card">
+          <div class="teacher-avatar">أح</div>
+          <div class="teacher-info">
+            <h4>Mr. Ahmed Khalil</h4>
+            <p>أ. أحمد خليل · Mathematics</p>
+          </div>
+          <div style="margin-right:0;margin-left:auto;background:#dcfce7;color:#15803d;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;">25% OFF</div>
+        </div>
+
+        <div class="price-preview" id="pp">
+          <div class="pp-row">
+            <span class="pp-label">Original Price</span>
+            <span class="pp-val" style="text-decoration:line-through;color:rgba(255,255,255,0.4);">500 EGP</span>
+          </div>
+          <div class="pp-divider"></div>
+          <div class="pp-row">
+            <span class="pp-label">Your Discount</span>
+            <span class="pp-val" style="color:var(--teal);">25% OFF  −125 EGP</span>
+          </div>
+          <div class="pp-divider"></div>
+          <div class="pp-row">
+            <span class="pp-label" style="font-weight:700;color:white;">You Pay</span>
+            <span class="pp-save">375 EGP</span>
+          </div>
+        </div>
+
+        <input placeholder="your@email.com" style="width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:13px;margin-bottom:12px;font-family:'Outfit',sans-serif;">
+        <button style="width:100%;padding:13px;background:var(--navy);color:white;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;">Get My Discount Code →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 6: CODE DELIVERY ════════════════ -->
+<div class="scene" id="s6">
+  <div class="annotation">
+    <div class="anno-num">4</div>
+    <div class="anno-title">Instant<br><span>Code Delivery</span></div>
+    <div class="anno-desc">A unique, one-time code is generated in under a second and emailed automatically.</div>
+    <div class="anno-bullets">
+      <div class="anno-bullet">Unique per student + teacher</div>
+      <div class="anno-bullet">Valid 48 hours only</div>
+      <div class="anno-bullet">One-tap copy to clipboard</div>
+      <div class="anno-bullet">Emailed automatically</div>
+    </div>
+  </div>
+
+  <div class="code-card" id="cc">
+    <div class="code-school">🎓 Cairo International School</div>
+    <div class="code-teacher">Mathematics · Mr. Ahmed Khalil</div>
+
+    <div class="code-badge-wrap">
+      <div class="code-badge">
+        <div class="pct">25%</div>
+        <div class="off">OFF</div>
+      </div>
+    </div>
+
+    <div class="code-prices">
+      <div class="cp-item">
+        <div class="cp-lbl">Original</div>
+        <div class="cp-val strike">500 EGP</div>
+      </div>
+      <div style="color:rgba(255,255,255,0.2);font-size:20px;align-self:center;">→</div>
+      <div class="cp-item">
+        <div class="cp-lbl">You Pay</div>
+        <div class="cp-val teal">375 EGP</div>
+      </div>
+      <div class="cp-item">
+        <div class="cp-lbl">You Save</div>
+        <div class="cp-val" style="color:#4ade80;">125 EGP</div>
+      </div>
+    </div>
+
+    <div class="code-box">
+      <div class="code-text">EDU-KHL-2025-X4F7</div>
+      <div class="copy-btn">📋 Copy</div>
+    </div>
+
+    <div class="code-expiry">Valid for 48 hours · Single use only</div>
+
+    <button class="use-btn">Use Code on Teacher's Platform →</button>
+  </div>
+</div>
+
+<!-- ══ SCENE 7: ADMIN DASHBOARD ════════════ -->
+<div class="scene" id="s7">
+  <div class="annotation" style="width:300px;">
+    <div class="anno-num" style="background:var(--navy);">⚡</div>
+    <div class="anno-title"><span>Admin</span><br>Dashboard</div>
+    <div class="anno-desc">Full control for administrators — manage schools, teachers, and monitor all activity in real time.</div>
+    <div class="anno-bullets">
+      <div class="anno-bullet">CRUD for schools & teachers</div>
+      <div class="anno-bullet">All issued codes visible</div>
+      <div class="anno-bullet">Enable/disable instantly</div>
+      <div class="anno-bullet">Export data as CSV</div>
+    </div>
+  </div>
+
+  <div class="admin-shell">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">🎓 EduDiscount<br><span style="font-size:10px;opacity:0.4;font-weight:400;">Admin Panel</span></div>
+      <div class="admin-nav-item active">🏫 Schools</div>
+      <div class="admin-nav-item">📚 Subjects</div>
+      <div class="admin-nav-item">👨‍🏫 Teachers</div>
+      <div class="admin-nav-item">🎟 Codes</div>
+      <div class="admin-nav-item">📊 Reports</div>
+      <div class="admin-nav-item">🔑 Access Codes</div>
+      <div class="admin-nav-item">⚙ Settings</div>
+    </div>
+    <div class="admin-content">
+      <div class="admin-page-title">🏫 Schools</div>
+      <div class="admin-stats-row">
+        <div class="admin-stat-card"><div class="val">3</div><div class="lbl">Active Schools</div></div>
+        <div class="admin-stat-card"><div class="val teal">247</div><div class="lbl">Codes Issued</div></div>
+        <div class="admin-stat-card"><div class="val">89%</div><div class="lbl">Redemption Rate</div></div>
+        <div class="admin-stat-card"><div class="val teal">18,450</div><div class="lbl">EGP Saved by Students</div></div>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>School</th><th>Language</th><th>Teachers</th><th>Codes</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Cairo International School</td><td>English</td><td>12</td><td>124</td><td><span class="status-active">Active</span></td></tr>
+          <tr><td>Nile Academy</td><td>Arabic</td><td>8</td><td>87</td><td><span class="status-active">Active</span></td></tr>
+          <tr><td>Delta STEM School</td><td>Arabic</td><td>10</td><td>36</td><td><span class="status-active">Active</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 8: ACCESS CODES ════════════════ -->
+<div class="scene" id="s8">
+  <div class="annotation" style="width:300px;">
+    <div class="anno-num" style="background:var(--navy);">🔑</div>
+    <div class="anno-title"><span>Access</span><br>Code Control</div>
+    <div class="anno-desc">Generate school codes and student codes in bulk. Set how many times each student code can be used.</div>
+    <div class="anno-bullets">
+      <div class="anno-bullet">Bulk generate up to 500</div>
+      <div class="anno-bullet">Set max uses per code</div>
+      <div class="anno-bullet">Enable / disable anytime</div>
+      <div class="anno-bullet">Export to CSV for distribution</div>
+    </div>
+  </div>
+
+  <div class="codes-panel">
+    <div class="codes-header">🔑 Access Codes — Cairo International School</div>
+    <div class="codes-body">
+      <div class="codes-school-badge">🏫 Cairo International School</div>
+      <div style="font-size:12px;color:#64748b;margin-bottom:8px;font-weight:600;">SCHOOL ACCESS CODE</div>
+      <div class="codes-school-code">
+        SCH-X7K2
+        <div style="display:flex;gap:8px;">
+          <span style="font-size:11px;font-family:'Outfit',sans-serif;background:#dcfce7;color:#15803d;padding:4px 10px;border-radius:6px;font-weight:700;">Active</span>
+          <span style="font-size:11px;font-family:'Outfit',sans-serif;background:var(--navy);color:white;padding:4px 10px;border-radius:6px;font-weight:700;cursor:pointer;">↻ Regenerate</span>
+        </div>
+      </div>
+
+      <div class="gen-form">
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px;">Bulk Generate Student Codes</div>
+        <div class="gen-row">
+          <div style="flex:1;">
+            <label>Number of Codes</label>
+            <input class="gen-input" value="50" id="bulkcount">
+          </div>
+          <div style="flex:1;">
+            <label>Max Uses Each</label>
+            <input class="gen-input" value="10">
+          </div>
+          <div style="flex:1;">
+            <label>Label Prefix</label>
+            <input class="gen-input" style="font-family:'Outfit',sans-serif;font-size:12px;" value="Grade-11">
+          </div>
+          <button class="gen-btn" id="genbtn">⚡ Generate</button>
+        </div>
+      </div>
+
+      <div class="code-count-badge" id="ccbadge">✅ 50 student codes generated successfully</div>
+
+      <table class="codes-table">
+        <thead><tr><th>Code</th><th>Label</th><th>Uses</th><th>Max</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>STU-A3F9K2</td><td>Grade-11-1</td><td>3</td><td>10</td><td><span class="status-active">Active</span></td></tr>
+          <tr><td>STU-B7M4X1</td><td>Grade-11-2</td><td>1</td><td>10</td><td><span class="status-active">Active</span></td></tr>
+          <tr><td>STU-C2P8Z6</td><td>Grade-11-3</td><td>10</td><td>10</td><td><span class="status-inactive">Limit Reached</span></td></tr>
+          <tr><td>STU-D5Q3W9</td><td>Grade-11-4</td><td>0</td><td>10</td><td><span class="status-active">Active</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 9: SETTINGS ═════════════════════ -->
+<div class="scene" id="s9">
+  <div class="annotation" style="width:300px;">
+    <div class="anno-num" style="background:var(--navy);">⚙</div>
+    <div class="anno-title">Full<br><span>Customization</span></div>
+    <div class="anno-desc">Upload a logo, pick page colors, change all text — the platform adapts to any brand identity instantly.</div>
+    <div class="anno-bullets">
+      <div class="anno-bullet">Upload logo or use emoji</div>
+      <div class="anno-bullet">Per-page background colors</div>
+      <div class="anno-bullet">Accent & primary colors</div>
+      <div class="anno-bullet">Live preview before saving</div>
+    </div>
+  </div>
+
+  <div class="settings-panel">
+    <div class="settings-header">⚙ Settings</div>
+    <div class="settings-body">
+      <div class="settings-section">
+        <div class="settings-section-title">Appearance</div>
+        <div class="logo-row">
+          <div class="logo-preview" id="logo-prev">🎓</div>
+          <div>
+            <button class="logo-upload-btn">📁 Upload Logo</button>
+            <div style="font-size:11px;color:#94a3b8;margin-top:6px;">Or paste image URL below</div>
+          </div>
+        </div>
+
+        <div style="font-size:11px;font-weight:600;color:#64748b;margin-bottom:10px;">Page Background Colors</div>
+        <div class="color-row">
+          <div class="color-swatch"><div class="swatch" id="sw1" style="background:#1B2A4A;"></div><div class="swatch-label">Welcome</div></div>
+          <div class="color-swatch"><div class="swatch" id="sw2" style="background:#1B2A4A;"></div><div class="swatch-label">Selector</div></div>
+          <div class="color-swatch"><div class="swatch" id="sw3" style="background:#1B2A4A;"></div><div class="swatch-label">Code Page</div></div>
+          <div style="flex:1;"></div>
+          <div class="color-swatch"><div class="swatch" style="background:#00B8A9;"></div><div class="swatch-label">Accent</div></div>
+          <div class="color-swatch"><div class="swatch" style="background:#1B2A4A;"></div><div class="swatch-label">Primary</div></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Live Preview</div>
+        <div class="settings-preview" id="spreview" style="background:#1B2A4A;">
+          <div class="sp-left">
+            <div class="sp-badge" style="background:#00B8A9;">25%</div>
+            <div class="sp-title">EduDiscount</div>
+          </div>
+          <span style="font-size:24px;" id="prev-icon">🎓</span>
+        </div>
+      </div>
+
+      <button style="padding:12px 32px;background:var(--navy);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;">✓ Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 10: REPORTS ═════════════════════ -->
+<div class="scene" id="s10">
+  <div class="annotation" style="width:280px;margin-right:40px;">
+    <div class="anno-num" style="background:var(--navy);">📊</div>
+    <div class="anno-title"><span>Analytics</span><br>& Reports</div>
+    <div class="anno-desc">Real-time data on every discount issued — who used what, when, and how much was saved.</div>
+    <div class="anno-bullets">
+      <div class="anno-bullet">Codes issued per month</div>
+      <div class="anno-bullet">Redemption rate per teacher</div>
+      <div class="anno-bullet">Total discount value given</div>
+      <div class="anno-bullet">Export all data as CSV</div>
+    </div>
+  </div>
+
+  <div class="reports-panel">
+    <div class="reports-title">📊 Reports</div>
+    <div class="reports-stats">
+      <div class="rstat"><div class="val" id="r1">0</div><div class="lbl">Total Codes Issued</div></div>
+      <div class="rstat"><div class="val" id="r2">0%</div><div class="lbl">Redemption Rate</div></div>
+      <div class="rstat"><div class="val" id="r3">0 EGP</div><div class="lbl">Total Savings Given</div></div>
+      <div class="rstat"><div class="val" id="r4">0</div><div class="lbl">Active Students</div></div>
+    </div>
+
+    <div style="display:flex;gap:24px;">
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px;">Codes Issued — Last 6 Months</div>
+        <div class="chart" id="chart">
+          <div class="bar-wrap"><div class="bar" id="b1" style="height:0px;"></div><div class="bar-label">Dec</div></div>
+          <div class="bar-wrap"><div class="bar" id="b2" style="height:0px;"></div><div class="bar-label">Jan</div></div>
+          <div class="bar-wrap"><div class="bar" id="b3" style="height:0px;"></div><div class="bar-label">Feb</div></div>
+          <div class="bar-wrap"><div class="bar" id="b4" style="height:0px;"></div><div class="bar-label">Mar</div></div>
+          <div class="bar-wrap"><div class="bar" id="b5" style="height:0px;"></div><div class="bar-label">Apr</div></div>
+          <div class="bar-wrap"><div class="bar" id="b6" style="height:0px;background:var(--teal);opacity:1;box-shadow:0 0 12px rgba(0,184,169,0.4);"></div><div class="bar-label" style="color:var(--teal);font-weight:700;">May</div></div>
+        </div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px;">Redemption Rate by Teacher</div>
+        <table class="teacher-table">
+          <thead><tr><th>Teacher</th><th>Rate</th></tr></thead>
+          <tbody>
+            <tr><td>Mr. Ahmed Khalil<div class="rate-bar"><div class="rate-fill" id="rf1" style="width:0%"></div></div></td><td style="color:var(--teal);font-weight:700;">92%</td></tr>
+            <tr><td>Ms. Nour Hassan<div class="rate-bar"><div class="rate-fill" id="rf2" style="width:0%"></div></td><td style="color:var(--teal);font-weight:700;">85%</td></tr>
+            <tr><td>Dr. James Wilson<div class="rate-bar"><div class="rate-fill" id="rf3" style="width:0%"></div></td><td style="color:var(--teal);font-weight:700;">78%</td></tr>
+            <tr><td>Ms. Rania Salem<div class="rate-bar"><div class="rate-fill" id="rf4" style="width:0%"></div></td><td style="color:var(--teal);font-weight:700;">71%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 11: CLOSING ═════════════════════ -->
+<div class="scene" id="s11">
+  <div class="s11-glow"></div>
+  <div class="s11-content">
+    <div class="s11-ready">Production Ready · Fully Bilingual · Deployable Today</div>
+    <div class="s11-h">Built for Egypt's<br><span>25 Million Students.</span></div>
+    <div class="s11-sub">Verified discounts. Real-time analytics. Zero fraud.</div>
+    <div class="s11-pills">
+      <div class="s11-pill">🔐 Double Verification</div>
+      <div class="s11-pill">🌍 Arabic + English</div>
+      <div class="s11-pill">⚡ &lt;60s Code Delivery</div>
+      <div class="s11-pill">📊 Full Analytics</div>
+      <div class="s11-pill">🎨 White-Label Ready</div>
+      <div class="s11-pill">🐳 Docker · 1-Command Deploy</div>
+    </div>
+    <div class="s11-cta">Backed by Mustaqbal Watan 🇪🇬</div>
+  </div>
+  <div class="s11-logo">
+    <span>🎓</span> <strong>EduDiscount</strong> · edudiscount.com
+  </div>
+</div>
+
+</div><!-- /stage -->
+
+<!-- PROGRESS + CONTROLS -->
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+<div id="controls">
+  <span id="scene-counter">1 / 11</span>
+  <button id="prev-btn">← Prev</button>
+  <button id="play-btn">⏸ Pause</button>
+  <button id="next-btn">Next →</button>
+</div>
+
+<script>
+const SCENES = ['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11'];
+const DURATIONS = [6000, 7000, 7000, 8000, 8000, 7000, 7000, 8000, 7000, 9000, 8000];
+let current = 0;
+let playing = true;
+let timer = null;
+let progressTimer = null;
+let progressStart = null;
+let progressDuration = 0;
+
+function showScene(idx) {
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  document.getElementById(SCENES[idx]).classList.add('active');
+  document.getElementById('scene-counter').textContent = (idx+1) + ' / ' + SCENES.length;
+  onSceneEnter(idx);
+}
+
+function startProgress(duration) {
+  clearInterval(progressTimer);
+  progressStart = Date.now();
+  progressDuration = duration;
+  const bar = document.getElementById('progress-bar');
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+  setTimeout(() => {
+    bar.style.transition = 'width ' + duration + 'ms linear';
+    bar.style.width = '100%';
+  }, 30);
+}
+
+function scheduleNext() {
+  clearTimeout(timer);
+  if (!playing) return;
+  const dur = DURATIONS[current];
+  startProgress(dur);
+  timer = setTimeout(() => {
+    if (current < SCENES.length - 1) {
+      current++;
+      showScene(current);
+      scheduleNext();
+    } else {
+      playing = false;
+      document.getElementById('play-btn').textContent = '▶ Play';
+    }
+  }, dur);
+}
+
+document.getElementById('play-btn').addEventListener('click', () => {
+  playing = !playing;
+  document.getElementById('play-btn').textContent = playing ? '⏸ Pause' : '▶ Play';
+  if (playing) scheduleNext();
+  else { clearTimeout(timer); clearInterval(progressTimer); }
+});
+
+document.getElementById('next-btn').addEventListener('click', () => {
+  clearTimeout(timer);
+  if (current < SCENES.length - 1) { current++; showScene(current); if(playing) scheduleNext(); }
+});
+
+document.getElementById('prev-btn').addEventListener('click', () => {
+  clearTimeout(timer);
+  if (current > 0) { current--; showScene(current); if(playing) scheduleNext(); }
+});
+
+// ── Scene-specific animations ──
+function onSceneEnter(idx) {
+  const id = SCENES[idx];
+
+  if (id === 's2') {
+    document.querySelectorAll('.prob-card').forEach(c => c.classList.remove('show'));
+    setTimeout(() => document.getElementById('pc1').classList.add('show'), 300);
+    setTimeout(() => document.getElementById('pc2').classList.add('show'), 900);
+    setTimeout(() => document.getElementById('pc3').classList.add('show'), 1500);
+  }
+
+  if (id === 's4') {
+    const vp = document.getElementById('vp');
+    const scode = document.getElementById('scode-input');
+    const vbadge = document.getElementById('vbadge');
+    const subj = document.getElementById('subj-sel');
+    vp.classList.remove('show'); vbadge.classList.remove('show');
+    scode.value = ''; scode.classList.remove('filled');
+    subj.style.color = '#94a3b8';
+    setTimeout(() => vp.classList.add('show'), 600);
+    setTimeout(() => { scode.value = 'STU-A3F9K2'; scode.classList.add('filled'); }, 2000);
+    setTimeout(() => {
+      vbadge.classList.add('show');
+      subj.style.color = '#1e293b';
+    }, 3500);
+  }
+
+  if (id === 's5') {
+    const pp = document.getElementById('pp');
+    pp.classList.remove('show');
+    setTimeout(() => pp.classList.add('show'), 800);
+  }
+
+  if (id === 's6') {
+    const cc = document.getElementById('cc');
+    cc.classList.remove('show');
+    setTimeout(() => cc.classList.add('show'), 400);
+  }
+
+  if (id === 's8') {
+    const badge = document.getElementById('ccbadge');
+    badge.classList.remove('show');
+    setTimeout(() => badge.classList.add('show'), 2500);
+  }
+
+  if (id === 's9') {
+    const colors = ['#1B2A4A','#0f2040','#1a3a5c'];
+    let ci = 0;
+    const sw1 = document.getElementById('sw1');
+    const sw2 = document.getElementById('sw2');
+    const sw3 = document.getElementById('sw3');
+    const prev = document.getElementById('spreview');
+    setTimeout(() => {
+      sw1.style.background = '#0f2040';
+      sw2.style.background = '#1a3a5c';
+      prev.style.background = '#0f2040';
+    }, 2000);
+  }
+
+  if (id === 's10') {
+    // Animate stats
+    const targets = [247, 89, 18450, 142];
+    const ids = ['r1','r2','r3','r4'];
+    const suffixes = ['', '%', ' EGP', ''];
+    ids.forEach((id, i) => { document.getElementById(id).textContent = '0' + suffixes[i]; });
+
+    setTimeout(() => {
+      const heights = [55, 70, 80, 95, 88, 120];
+      ['b1','b2','b3','b4','b5','b6'].forEach((id, i) => {
+        document.getElementById(id).style.height = heights[i] + 'px';
+      });
+      ['rf1','rf2','rf3','rf4'].forEach((id, w) => {
+        const ws = [92, 85, 78, 71];
+        document.getElementById(id).style.width = ws[w] + '%';
+      });
+
+      targets.forEach((target, i) => {
+        const el = document.getElementById(ids[i]);
+        let v = 0; const step = target / 40;
+        const iv = setInterval(() => {
+          v = Math.min(v + step, target);
+          el.textContent = Math.floor(v) + suffixes[i];
+          if (v >= target) clearInterval(iv);
+        }, 40);
+      });
+    }, 500);
+  }
+}
+
+// Start
+showScene(0);
+scheduleNext();
+</script>
+</body>
+</html>
