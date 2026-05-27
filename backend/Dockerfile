@@ -5,5 +5,6 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npx prisma generate
+RUN mkdir -p /app/uploads
 EXPOSE 3001
-CMD sh -c "npx prisma generate && npx prisma migrate deploy && node prisma/seed.js && node src/index.js"
+CMD ["node", "src/index.js"]
