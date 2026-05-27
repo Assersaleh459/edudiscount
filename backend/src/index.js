@@ -22,7 +22,16 @@ const verifyRouter = require('./routes/verify')
 
 const app = express()
 
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }))
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map(s => s.trim())
+  : []
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.length === 0 || allowedOrigins.some(o => origin.startsWith(o))) cb(null, true)
+    else cb(new Error('Not allowed by CORS'))
+  },
+  credentials: true
+}))
 app.use(express.json())
 
 // Serve uploaded files
