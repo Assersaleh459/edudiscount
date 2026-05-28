@@ -5,14 +5,14 @@ export default {
     extend: {
       colors: {
         navy: {
-          DEFAULT: '#1A2A5E',
-          light: '#243578',
-          dark: '#111d42',
+          DEFAULT: 'var(--primary, #1A2A5E)',
+          light: 'color-mix(in srgb, var(--primary, #1A2A5E) 80%, white)',
+          dark: 'color-mix(in srgb, var(--primary, #1A2A5E) 80%, black)',
         },
         teal: {
-          DEFAULT: '#0D9488',
-          light: '#14b8a6',
-          dark: '#0f766e',
+          DEFAULT: 'var(--accent, #0D9488)',
+          light: 'color-mix(in srgb, var(--accent, #0D9488) 80%, white)',
+          dark: 'color-mix(in srgb, var(--accent, #0D9488) 80%, black)',
         },
       },
       fontFamily: {
