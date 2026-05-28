@@ -1,6 +1,14 @@
 import { useState } from 'react'
 import { useTheme } from '../context/ThemeContext'
 
+const API_BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/api$/, '')
+
+function resolveUrl(url) {
+  if (!url) return url
+  if (url.startsWith('http')) return url
+  return API_BASE + url
+}
+
 export default function PageIcon({ size = 'sm' }) {
   const theme = useTheme()
   const [imgError, setImgError] = useState(false)
@@ -10,7 +18,7 @@ export default function PageIcon({ size = 'sm' }) {
   if (theme.logoUrl && !imgError) {
     return (
       <img
-        src={theme.logoUrl}
+        src={resolveUrl(theme.logoUrl)}
         alt="Logo"
         className={`${sizeClass} object-contain`}
         onError={() => setImgError(true)}
