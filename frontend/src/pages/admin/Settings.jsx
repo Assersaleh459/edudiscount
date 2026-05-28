@@ -2,6 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import api from '../../api/client'
 import { useTheme } from '../../context/ThemeContext'
 
+const API_BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/api$/, '')
+function resolveUrl(url) {
+  if (!url) return url
+  if (url.startsWith('http')) return url
+  return API_BASE + url
+}
+
 function AutoTextarea({ value, onChange, dir, placeholder }) {
   const ref = useRef(null)
   useEffect(() => {
@@ -60,7 +67,11 @@ export default function Settings() {
       const { data } = await api.post('/admin/upload', form, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      set('logoUrl', data.url)
+      const newUrl = data.url
+      set('logoUrl', newUrl)
+      // Auto-save so the logo is immediately applied site-wide
+      await api.put('/admin/settings', { ...settings, logoUrl: newUrl })
+      refetch()
     } catch {
       alert('Upload failed. Max size is 5MB. Allowed: JPG, PNG, GIF, WebP, SVG.')
     } finally {
@@ -111,7 +122,7 @@ export default function Settings() {
             {/* Preview box */}
             <div className="w-20 h-20 rounded-xl bg-navy/10 flex items-center justify-center overflow-hidden border-2 border-gray-200 flex-shrink-0">
               {settings.logoUrl && !logoError ? (
-                <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-contain p-1" onError={() => setLogoError(true)} />
+                <img src={resolveUrl(settings.logoUrl)} alt="Logo" className="w-full h-full object-contain p-1" onError={() => setLogoError(true)} />
               ) : (
                 <span className="text-4xl">{settings.welcomeIcon || '🎓'}</span>
               )}
@@ -228,7 +239,7 @@ export default function Settings() {
               <span className="text-white font-semibold">{settings.welcomeTitle || 'EduDiscount'}</span>
             </div>
             {settings.logoUrl
-              ? <img src={settings.logoUrl} alt="Logo" className="w-8 h-8 object-contain" />
+              ? <img src={resolveUrl(settings.logoUrl)} alt="Logo" className="w-8 h-8 object-contain" />
               : <span className="text-2xl">{settings.welcomeIcon || '🎓'}</span>
             }
           </div>
